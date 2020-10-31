@@ -1,6 +1,6 @@
 // Full spec-compliant TodoMVC with localStorage persistence
 // and hash-based routing in ~150 lines.
-
+/* eslint-disable */
 // localStorage persistence
 var STORAGE_KEY = 'todos-vuejs-2.0'
 var todoStorage = {
@@ -33,6 +33,20 @@ var filters = {
     })
   }
 }
+
+Vue.component('mytest', {
+  data() {
+    // debugger
+    return {
+      s: 11
+    };
+  },
+  template: `
+    <div class="blog-post">
+      <h3>{{ s }}</h3>
+    </div>
+  `
+})
 
 // app Vue instance
 var app = new Vue({
