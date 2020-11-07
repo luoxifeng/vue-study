@@ -3,3 +3,4 @@
 ## Vue源码解析
 
  - provide & inject
+ - slot
