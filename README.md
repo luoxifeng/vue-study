@@ -4,3 +4,4 @@
 
  - provide & inject
  - slot
+ - keep-alive
