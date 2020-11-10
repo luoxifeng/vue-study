@@ -5,3 +5,4 @@
  - provide & inject
  - slot
  - keep-alive
+ - component
