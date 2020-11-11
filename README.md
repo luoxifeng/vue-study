@@ -3,3 +3,7 @@
 ## Vue源码解析
 
  - provide & inject
+ - slot
+ - keep-alive
+ - component
+ - computed
