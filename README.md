@@ -6,3 +6,4 @@
  - slot
  - keep-alive
  - component
+ - computed
