@@ -3,6 +3,7 @@ const path = require('path')
 
 webpack({
     entry: './kk.js',
+    watch: true,
     module: {
         rules: [
             {
