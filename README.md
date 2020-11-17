@@ -7,4 +7,4 @@
  - keep-alive
  - component
  - computed
- — $watch
+ - $watch
