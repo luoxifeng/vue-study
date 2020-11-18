@@ -8,3 +8,4 @@
  - component
  - computed
  - $watch
+ - $on & $off & $once & $emit
