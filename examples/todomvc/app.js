@@ -3,47 +3,22 @@
 /* eslint-disable */
 // localStorage persistence
 var STORAGE_KEY = 'todos-vuejs-2.0'
-var todoStorage = {
-  fetch: function () {
-    var todos = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
-    todos.forEach(function (todo, index) {
-      todo.id = index
-    })
-    todoStorage.uid = todos.length
-    return todos
-  },
-  save: function (todos) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(todos))
-  }
-}
 
-// visibility filters
-var filters = {
-  all: function (todos) {
-    return todos
-  },
-  active: function (todos) {
-    return todos.filter(function (todo) {
-      return !todo.completed
-    })
-  },
-  completed: function (todos) {
-    return todos.filter(function (todo) {
-      return todo.completed
-    })
-  }
-}
-
+// Vue.prototype.$on('hook:beforeMount', () => {
+//   alert()
+// })
 Vue.component('mytest', {
+  props: ['hh'],
   data() {
     // debugger
     return {
-      s: 11
+      s: 1551
     };
   },
   template: `
-    <div class="blog-post">
+    <div class="blog-post" >
       <h3>{{ s }}</h3>
+      <h3>{{ $attrs.value }}</h3>
     </div>
   `
 })
@@ -52,42 +27,51 @@ Vue.component('mytest', {
 var app = new Vue({
   // app initial state
   data: {
-    todos: todoStorage.fetch(),
-    newTodo: '',
-    editedTodo: null,
-    visibility: 'all'
+    a: {
+      b: {
+        k: [],
+        c: {
+          d: 11
+        }
+      }
+    }
   },
 
   // watch todos change for localStorage persistence
-  watch: {
-    todos: {
-      handler: function (todos) {
-        todoStorage.save(todos)
-      },
-      deep: true
-    }
-  },
+  // watch: {
+  //   "a.b.c": {
+  //     handler: function (val) {
+  //       console.log(val)
+  //     },
+  //     // deep: true
+  //   }
+  // },
 
   // computed properties
   // https://vuejs.org/guide/computed.html
   computed: {
-    filteredTodos: function () {
-      return filters[this.visibility](this.todos)
+    b() {
+      return this.a.b.k
     },
-    remaining: function () {
-      return filters.active(this.todos).length
-    },
-    allDone: {
-      get: function () {
-        return this.remaining === 0
-      },
-      set: function (value) {
-        this.todos.forEach(function (todo) {
-          todo.completed = value
-        })
+  },
+  created() {
+    // this._hasHookEvent = 1
+    // this._events['hook:beforeMount'] = [() => {
+    //   debugger
+    //   console.log('hook:beforeMount')
+    // }]
+    // this.$on('hook:mounted', () => {
+    //   debugger
+    //   console.log('hook:mounted');
+    // })
+  },
+  mixins: [
+    {
+      created() {
+
       }
     }
-  },
+  ],
 
   filters: {
     pluralize: function (n) {
@@ -98,47 +82,6 @@ var app = new Vue({
   // methods that implement data logic.
   // note there's no DOM manipulation here at all.
   methods: {
-    addTodo: function () {
-      var value = this.newTodo && this.newTodo.trim()
-      if (!value) {
-        return
-      }
-      this.todos.push({
-        id: todoStorage.uid++,
-        title: value,
-        completed: false
-      })
-      this.newTodo = ''
-    },
-
-    removeTodo: function (todo) {
-      this.todos.splice(this.todos.indexOf(todo), 1)
-    },
-
-    editTodo: function (todo) {
-      this.beforeEditCache = todo.title
-      this.editedTodo = todo
-    },
-
-    doneEdit: function (todo) {
-      if (!this.editedTodo) {
-        return
-      }
-      this.editedTodo = null
-      todo.title = todo.title.trim()
-      if (!todo.title) {
-        this.removeTodo(todo)
-      }
-    },
-
-    cancelEdit: function (todo) {
-      this.editedTodo = null
-      todo.title = this.beforeEditCache
-    },
-
-    removeCompleted: function () {
-      this.todos = filters.active(this.todos)
-    }
   },
 
   // a custom directive to wait for the DOM to be updated
@@ -153,19 +96,6 @@ var app = new Vue({
   }
 })
 
-// handle routing
-function onHashChange () {
-  var visibility = window.location.hash.replace(/#\/?/, '')
-  if (filters[visibility]) {
-    app.visibility = visibility
-  } else {
-    window.location.hash = ''
-    app.visibility = 'all'
-  }
-}
-
-window.addEventListener('hashchange', onHashChange)
-onHashChange()
-
-// mount
 app.$mount('.todoapp')
+
+window.app = app;
