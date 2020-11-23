@@ -2,9 +2,10 @@
 
 ## Vue源码解析
  - reactive
+ - computed
+ - Watcher
  - provide & inject
  - slot & scopedSlot
- - computed
  - $watch & $delete
  - $on & $off & $once & $emit
  - v-model
