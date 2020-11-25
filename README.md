@@ -2,6 +2,7 @@
 
 ## Vue源码解析
  - initState
+ - initComputed
  - reactive
  - computed
  - Watcher
