@@ -15,6 +15,15 @@ Vue.component('mytest', {
       s: 1551
     };
   },
+  created() {
+    console.warn('child mytest created')
+  },
+  beforeMount() {
+    console.warn('child mytest beforeMount')
+  },
+  mounted() {
+    console.warn('child mytest mounted')
+  },
   template: `
     <div class="blog-post" >
       <h3>{{ s }}</h3>
@@ -23,9 +32,7 @@ Vue.component('mytest', {
   `
 })
 
-// app Vue instance
 var app = new Vue({
-  // app initial state
   data: {
     a: {
       b: {
@@ -55,6 +62,7 @@ var app = new Vue({
     },
   },
   created() {
+    console.warn('root component created')
     // this._hasHookEvent = 1
     // this._events['hook:beforeMount'] = [() => {
     //   debugger
@@ -64,6 +72,12 @@ var app = new Vue({
     //   debugger
     //   console.log('hook:mounted');
     // })
+  },
+  beforeMount() {
+    console.warn('root component beforeMount')
+  },
+  mounted() {
+    console.warn('root component mounted')
   },
   mixins: [
     {
