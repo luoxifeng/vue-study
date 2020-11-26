@@ -4,12 +4,20 @@
  
  
 ## mixin
-    - initMixin
-    - stateMixin
-    - eventsMixin
-    - lifecycleMixin
-    - renderMixin
- - this._init
+ - initMixin
+ - stateMixin
+ - eventsMixin
+ - lifecycleMixin
+ - renderMixin
+
+## initMixin
+ - _init  
+   - $options
+   - initProxy
+   - initLifecycle
+   - $mount
+
+## stateMixin
  - initState
  - initComputed
  - reactive
