@@ -13,3 +13,4 @@
  - v-model
  - keep-alive
  - component
+ - filters
