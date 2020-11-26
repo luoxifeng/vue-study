@@ -32,6 +32,12 @@ export function setActiveInstance(vm: Component) {
 export function initLifecycle (vm: Component) {
   const options = vm.$options
 
+  /**
+   * 此时options上面已经有parent,指向包裹当前组件的组件(不一定是是当前组件的$parent)
+   * 当前组件的$parent指向向上寻找到的最近的非抽象组件
+   * 找到以后向父组件里面$children添加当前组件
+   * 注意：父组件的$children里面的子组件是在子组件实例化以后才添加的
+   */
   // locate first non-abstract parent
   let parent = options.parent
   if (parent && !options.abstract) {
@@ -41,9 +47,21 @@ export function initLifecycle (vm: Component) {
     parent.$children.push(vm)
   }
 
+  /**
+   * 在当前组件上挂载$parent, $root
+   * 因为根组件是没有parent的,所以当组件的$options.parent为空的时候说明是根组件
+   * 根组件的$root是他本身
+   * 非根组件是通过父组件上面取，父组件又是通过他自己的父组件取得，这是一个自上向下的过程
+   * 其实最初是因为根组件上面$root是根组件本身，根组件的子组件是在options.parent取得，此时options.parent就是根组件
+   * 在接着往下走的时候，子组件都从父组件上面取$root,一层层下去，所以当前组件只要从父组件上面取$root就行了
+   */
   vm.$parent = parent
   vm.$root = parent ? parent.$root : vm
 
+  /**
+   * 初始化$children, $refs
+   * 以及内部使用的一些属性，有的属性是起到标志作用
+   */
   vm.$children = []
   vm.$refs = {}
 
@@ -143,6 +161,7 @@ export function mountComponent (
   el: ?Element,
   hydrating?: boolean
 ): Component {
+  debugger
   vm.$el = el
   if (!vm.$options.render) {
     vm.$options.render = createEmptyVNode

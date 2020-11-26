@@ -14,7 +14,7 @@ module.exports = {
     "flowtype"
   ],
   extends: [
-    "eslint:recommended",
+    // "eslint:recommended",
     "plugin:flowtype/recommended"
   ],
   globals: {
