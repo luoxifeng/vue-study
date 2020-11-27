@@ -5,6 +5,7 @@
  
 ## mixin
  - initMixin
+   - Vue.prototype._init
  - stateMixin
  - eventsMixin
  - lifecycleMixin
