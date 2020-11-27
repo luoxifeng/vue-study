@@ -12,9 +12,16 @@
 
 ## initMixin
  - _init  
-   - $options
-   - initProxy
+   - 初始化$options
+   - 代理实例initProxy
    - initLifecycle
+   - initEvents
+   - initRender
+   - callHook-beforeCreate
+   - initInjections
+   - initState
+   - initProvide
+   - callHook-created
    - $mount
 
 ## stateMixin
