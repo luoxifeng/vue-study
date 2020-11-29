@@ -39,3 +39,8 @@
  - keep-alive
  - component
  - filters
+## eventsMixin 
+ - $on
+ - $once
+ - $emit
+ - $off
