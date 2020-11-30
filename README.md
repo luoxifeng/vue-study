@@ -13,7 +13,12 @@
   - $delete
   - $watch 
 - eventsMixin
+  - $on
+  - $once
+  - $off
+  - $emit
 - lifecycleMixin
+
 - renderMixin
 
 ## initMixin
@@ -22,10 +27,12 @@
   - 代理实例initProxy
   - initLifecycle
   - initEvents
+    - updateComponentListeners
   - initRender
   - callHook-beforeCreate
   - initInjections
   - initState
+    - initProps
   - initProvide
   - callHook-created
   - $mount
@@ -37,7 +44,7 @@
 - $delete = del
 - $watch => unWatch
 
- - initState
+## other
  - initComputed
  - reactive
  - computed
@@ -50,9 +57,14 @@
  - keep-alive
  - component
  - filters
+
 ## eventsMixin 
 - $on
 - $once
 - $off
 - $emit
+
+## lifecycleMixin
+
+## renderMixin
  
