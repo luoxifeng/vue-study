@@ -78,10 +78,10 @@
 - $on (vm._events在initEvents中初始化)
   1. event名称如果为数组，遍历执行vm.$on
   2. vm._events\[event\].push(fn)
-  ```
-  如果event是/^hook:/,设置vm._hasHookEvent = true,
-  在callHooks的时候，如果_hasHookEvent === true，会从_events找到hook的生命周期执行
-  ```
+      ```
+      如果event是/^hook:/,设置vm._hasHookEvent = true,
+      在callHooks的时候，如果_hasHookEvent === true，会从_events找到hook的生命周期执行
+      ```
 - $once
 - $off
 - $emit
