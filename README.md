@@ -26,6 +26,19 @@
   - 初始化$options
   - 代理实例initProxy
   - initLifecycle
+    - 子组件向上寻找最近的非抽象组件（就是找父组件）
+    - 向父组件$children添加自己 `（注意：父组件的$children里的值是在子组件添加的）`
+    - 设置$parent `（根组件没有$parent）`
+    - 设置$root `（根组件$root为自己，注意：当前组件的$root是从父组件层层承接过来的）`
+    - 初始化一些实例上的值
+      - vm.$children = []
+      - vm.$refs = {}
+      - vm._watcher = null
+      - vm._inactive = null
+      - vm._directInactive = false
+      - vm._isMounted = false
+      - vm._isDestroyed = false
+      - vm._isBeingDestroyed = false
   - initEvents
     - updateComponentListeners
   - initRender
@@ -33,6 +46,10 @@
   - initInjections
   - initState
     - initProps
+    - initMethods
+    - initData
+    - initComputed
+    - initWatch
   - initProvide
   - callHook-created
   - $mount
