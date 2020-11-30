@@ -4,28 +4,39 @@
  
  
 ## mixin
- - initMixin
-   - Vue.prototype._init
- - stateMixin
- - eventsMixin
- - lifecycleMixin
- - renderMixin
+- initMixin
+  - _init
+- stateMixin
+  - 代理$data
+  - 代理$props
+  - $set
+  - $delete
+  - $watch 
+- eventsMixin
+- lifecycleMixin
+- renderMixin
 
 ## initMixin
- - _init  
-   - 初始化$options
-   - 代理实例initProxy
-   - initLifecycle
-   - initEvents
-   - initRender
-   - callHook-beforeCreate
-   - initInjections
-   - initState
-   - initProvide
-   - callHook-created
-   - $mount
+- _init
+  - 初始化$options
+  - 代理实例initProxy
+  - initLifecycle
+  - initEvents
+  - initRender
+  - callHook-beforeCreate
+  - initInjections
+  - initState
+  - initProvide
+  - callHook-created
+  - $mount
 
 ## stateMixin
+- 代理$data -> this._data
+- 代理$props -> this._props
+- $set = set
+- $delete = del
+- $watch => unWatch
+
  - initState
  - initComputed
  - reactive
@@ -40,7 +51,8 @@
  - component
  - filters
 ## eventsMixin 
- - $on
- - $once
- - $emit
- - $off
+- $on
+- $once
+- $off
+- $emit
+ 
