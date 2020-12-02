@@ -22,7 +22,9 @@
   - $forceUpdate
   - $destroy
 - renderMixin
-  - 
+  - installRenderHelpers
+  - $nextTick
+  - _render
 
 ## initMixin
 - _init
