@@ -2,8 +2,20 @@
 
 # Vue源码解析 
  
- 
-## mixin
+## 全局Api 
+全局Api文件在`core/global-api`文件下，在`core/index.js`里通过`initGlobalAPI(Vue)`安装。<br>
+`initGlobalAPI`在`core/global-api/index.js`里，主要包含以下部分
+  - Object.defineProperty(Vue, 'config', configDef)`
+  - Vue.util
+  - Vue.set, Vue.delete, Vue.nextTick, Vue.observable
+  - Vue.options, Vue.options._base = Vue
+  - extend(Vue.options.components, builtInComponents)
+  - 
+
+
+## 实例Api
+
+### mixin
 - initMixin
   - _init
 - stateMixin
