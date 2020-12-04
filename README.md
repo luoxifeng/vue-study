@@ -22,34 +22,11 @@
 包含以下`mixin`
 - initMixin `(挂载_init函数，也是实例化的入口函数)`
 - stateMixin `(挂载操作数据相关的Api，eg: $set, $delete, $watch)`
-- eventsMixin `(挂载事件相关的Api，eg: )`
-- lifecycleMixin
-- renderMixin
+- eventsMixin `(挂载事件相关的Api，eg: $on, $once, $off, $emit)`
+- lifecycleMixin `(挂载生命周期相关的Api，eg: _update, $forceUpdate, $destroy)`
+- renderMixin `(挂载渲染相关的Api，eg: $nextTick,_render)`
 
-### mixin
-- initMixin
-  - _init
-- stateMixin
-  - 代理$data
-  - 代理$props
-  - $set
-  - $delete
-  - $watch 
-- eventsMixin
-  - $on
-  - $once
-  - $off
-  - $emit
-- lifecycleMixin
-  - _update
-  - $forceUpdate
-  - $destroy
-- renderMixin
-  - installRenderHelpers
-  - $nextTick
-  - _render
-
-## initMixin
+### initMixin
 - _init
   - 初始化$options
   - 代理实例initProxy
@@ -82,27 +59,14 @@
   - callHook-created
   - $mount
 
-## stateMixin
+### stateMixin
 - 代理$data -> this._data
 - 代理$props -> this._props
 - $set = set
 - $delete = del
 - $watch => unWatch
 
-## other
- - initComputed
- - reactive
- - computed
- - Watcher
- - provide & inject
- - slot & scopedSlot
- - $watch & $delete
- - v-model
- - keep-alive
- - component
- - filters
-
-## eventsMixin 
+### eventsMixin 
 - $on (vm._events在initEvents中初始化)
   1. event名称如果为数组，遍历执行vm.$on
   2. vm._events\[event\].push(fn)
@@ -114,7 +78,7 @@
 - $off
 - $emit
 
-## lifecycleMixin
+### lifecycleMixin
 
-## renderMixin
+### renderMixin
  
