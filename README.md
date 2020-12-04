@@ -3,17 +3,28 @@
 # Vue源码解析 
  
 ## 全局Api 
-全局Api文件在`core/global-api`文件下，在`core/index.js`里通过`initGlobalAPI(Vue)`安装。<br>
+全局Api文件在`src/core/global-api`文件夹下，在`src/core/index.js`里通过`initGlobalAPI(Vue)`安装。<br>
 `initGlobalAPI`在`core/global-api/index.js`里，主要包含以下部分
   - Object.defineProperty(Vue, 'config', configDef)`
   - Vue.util
   - Vue.set, Vue.delete, Vue.nextTick, Vue.observable
   - Vue.options, Vue.options._base = Vue
   - extend(Vue.options.components, builtInComponents)
-  - 
+  - initUse(Vue)
+  - initMixin(Vue)
+  - initExtend(Vue)
+  - initAssetRegisters(Vue)
 
 
 ## 实例Api
+实例Api文件分布在`src/core/instance`文件夹下，此目录下`index.js`文件引入了同级目录的其他文件的`xxxMixin`函数。<br>
+`index.js`首先定义`Vue的构造函数`，然后通过调用`xxxMixin(Vue)`的方式在`Vue.prototype`上设置相应的实例方法以及属性。<br>
+包含以下`mixin`
+- initMixin `(挂载_init函数，也是实例化的入口函数)`
+- stateMixin `(挂载操作数据相关的Api，eg: $set, $delete, $watch)`
+- eventsMixin `(挂载事件相关的Api，eg: )`
+- lifecycleMixin
+- renderMixin
 
 ### mixin
 - initMixin
