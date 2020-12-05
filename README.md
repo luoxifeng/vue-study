@@ -79,6 +79,8 @@
 - $emit
 
 ### lifecycleMixin
-
+- _update
+- $forceUpdate
+- $destroy
 ### renderMixin
  
