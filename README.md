@@ -83,4 +83,6 @@
 - $forceUpdate
 - $destroy
 ### renderMixin
+- _render
+- $nextTick
  
