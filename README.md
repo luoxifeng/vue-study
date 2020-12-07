@@ -28,7 +28,16 @@
 
 ### initMixin
 - _init
-  - 初始化$options
+  - vm._uid = uid++
+  - vm._isVue = true `(避免被响应式)`
+  - 初始化$options 或者 初始化子组件
+    ```javascript
+      if (options && options._isComponent) {
+        initInternalComponent(vm, options)
+      } else {
+        vm.$options = mergeOptions(...)
+      }
+    ```
   - 代理实例initProxy
   - initLifecycle
     - 子组件向上寻找最近的非抽象组件（就是找父组件）
