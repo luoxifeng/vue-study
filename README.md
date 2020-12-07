@@ -56,7 +56,7 @@
   - initEvents
     - updateComponentListeners
   - initRender
-  - callHook-beforeCreate
+  - `callHook(vm, 'beforeCreate')`
   - initInjections
   - initState
     - initProps
@@ -65,7 +65,7 @@
     - initComputed
     - initWatch
   - initProvide
-  - callHook-created
+  - `callHook(vm, 'created')`
   - $mount
 
 ### stateMixin
