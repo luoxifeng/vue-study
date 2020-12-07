@@ -60,8 +60,10 @@
   - $mount
 
 ### stateMixin
-- 代理$data -> this._data
-- 代理$props -> this._props
+- 代理$data -> this._data  
+  `Object.defineProperty(Vue.prototype, '$data', function () { return this._data })`
+- 代理$props -> this._props  
+  `Object.defineProperty(Vue.prototype, '$data', function () { return this._props })`
 - $set = set
 - $delete = del
 - $watch => unWatch
