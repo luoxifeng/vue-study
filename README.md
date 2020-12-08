@@ -54,6 +54,8 @@
       - vm._isDestroyed = false
       - vm._isBeingDestroyed = false
   - initEvents
+    - vm._events = Object.create(null)
+    - vm._hasHookEvent = false
     - updateComponentListeners
   - initRender
   - `callHook(vm, 'beforeCreate')`
