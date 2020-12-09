@@ -98,4 +98,21 @@
 ### renderMixin
 - _render
 - $nextTick
+
+<script>
+var readme = document.getElementById('readme')
+if (readme) {
+  readme.addEventListener('click', function(e) {
+    if (e.target.tagName === 'LI') {
+      if (var ul = e.target.querySelector('ul')) {
+        if (ul.style.display === '' || ul.style.display === 'none') {
+          ul.style.display = 'block';
+        } else {
+          ul.style.display = 'none';
+        }
+      }
+    }
+  })
+}
+</script>
  
