@@ -1,6 +1,6 @@
 <p align="center"><a href="https://vuejs.org" target="_blank" rel="noopener noreferrer"><img width="100" src="https://vuejs.org/images/logo.png" alt="Vue logo"></a></p>
 
-# <span onclick="function(){ document.body.append('llll')}">Vue源码解析</span>
+# Vue源码解析
  
 ## 全局Api 
 全局Api文件在`src/core/global-api`文件夹下，在`src/core/index.js`里通过`initGlobalAPI(Vue)`安装。<br>
@@ -98,21 +98,4 @@
 ### renderMixin
 - _render
 - $nextTick
-
-<script>
-var readme = document.getElementById('readme')
-if (readme) {
-  readme.addEventListener('click', function(e) {
-    if (e.target.tagName === 'LI') {
-      if (var ul = e.target.querySelector('ul')) {
-        if (ul.style.display === '' || ul.style.display === 'none') {
-          ul.style.display = 'block';
-        } else {
-          ul.style.display = 'none';
-        }
-      }
-    }
-  })
-}
-</script>
  
