@@ -7,13 +7,18 @@ var STORAGE_KEY = 'todos-vuejs-2.0'
 // Vue.prototype.$on('hook:beforeMount', () => {
 //   alert()
 // })
-Vue.component('mytest', {
-  props: ['hh'],
+var cfg = {
+  props: ['hh', 'd'],
   data() {
     // debugger
     return {
       s: 1551
     };
+  },
+  computed: {
+    ll() {
+      return this.s + 1
+    },
   },
   created() {
     console.warn('child mytest created')
@@ -28,9 +33,14 @@ Vue.component('mytest', {
     <div class="blog-post" >
       <h3>{{ s }}</h3>
       <h3>{{ $attrs.value }}</h3>
+      <h3>{{ d.join('-') }}</h3>
     </div>
   `
-})
+}
+var com = Vue.component('mytest', cfg)
+
+Vue.component('ytest2', cfg)
+
 
 var app = new Vue({
   data: {
@@ -41,7 +51,8 @@ var app = new Vue({
           d: 11
         }
       }
-    }
+    },
+    d: [1, 2]
   },
 
   // watch todos change for localStorage persistence

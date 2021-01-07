@@ -75,7 +75,6 @@ export function initLifecycle (vm: Component) {
 
 export function lifecycleMixin (Vue: Class<Component>) {
   Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
-    debugger
     const vm: Component = this
     const prevEl = vm.$el
     const prevVnode = vm._vnode
@@ -162,7 +161,6 @@ export function mountComponent (
   el: ?Element,
   hydrating?: boolean
 ): Component {
-  debugger
   vm.$el = el
   if (!vm.$options.render) {
     vm.$options.render = createEmptyVNode

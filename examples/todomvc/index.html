@@ -7,9 +7,10 @@
   <body>
     <section class="todoapp" >
       <input v-model="a.b.c.d">
-      <mytest v-model="a.b.c.d" @click.native="() => { debugger }" hh="123" >
+      <mytest v-model="a.b.c.d"  :d="d" hh="123" >
         <div>9999</div>
       </mytest>
+      <mytest2 />
     </section>
     <script src="../../dist/vue.js"></script>
     <script src="app.js"></script>
