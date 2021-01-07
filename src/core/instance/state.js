@@ -62,7 +62,6 @@ export function initState (vm: Component) {
 }
 
 function initProps (vm: Component, propsOptions: Object) {
-  debugger
   const propsData = vm.$options.propsData || {}
   const props = vm._props = {}
   // cache prop keys so that future props updates can iterate using Array
@@ -73,11 +72,22 @@ function initProps (vm: Component, propsOptions: Object) {
   if (!isRoot) {
     toggleObserving(false)
   }
+
+  /**
+   * 之所以在父组件改变了传入子组件的简单类型的prop
+   * 引起子组件重新渲染的原因是
+   * 1.在父组件赋值引起父组件重新渲染，导致子组件的props对应的值需要重新赋值
+   * 2.同时子组件内部对props做了响应式处理，下面就是
+   * 所以子组件在对本身的props赋值的时候引起了自身的重新渲染
+   * 具体代码在updateChildComponent里面会update props
+   * 主要做的是从父组件传入的props,赋值给本身的props,
+   * 本身的props又是响应式的，所以重新渲染
+   */
   for (const key in propsOptions) {
     keys.push(key)
     const value = validateProp(key, propsOptions, propsData, vm)
     /* istanbul ignore else */
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV !== 'production' ) {
       const hyphenatedKey = hyphenate(key)
       if (isReservedAttribute(hyphenatedKey) ||
           config.isReservedAttr(hyphenatedKey)) {

@@ -32,8 +32,8 @@ var cfg = {
   template: `
     <div class="blog-post" >
       <h3>{{ s }}</h3>
-      <h3>{{ $attrs.value }}</h3>
-      <h3>{{ d.join('-') }}</h3>
+      {{$listeners}}
+      <h3>{{ d }}</h3>
     </div>
   `
 }
@@ -52,9 +52,8 @@ var app = new Vue({
         }
       }
     },
-    d: [1, 2]
+    d: 1258
   },
-
   // watch todos change for localStorage persistence
   // watch: {
   //   "a.b.c": {
@@ -73,6 +72,7 @@ var app = new Vue({
     },
   },
   created() {
+    this.a.s = 10
     console.warn('root component created')
     // this._hasHookEvent = 1
     // this._events['hook:beforeMount'] = [() => {

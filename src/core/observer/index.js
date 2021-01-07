@@ -162,6 +162,10 @@ export function defineReactive (
       if (Dep.target) {
         dep.depend()
         if (childOb) {
+          /**
+           * 当调用Vue.prottotype.$set(target, key, val)的时候 
+           * 需要target.__ob__.dep.notify()
+           */
           childOb.dep.depend()
           if (Array.isArray(value)) {
             dependArray(value)
