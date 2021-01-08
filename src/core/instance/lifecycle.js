@@ -255,6 +255,12 @@ export function updateChildComponent (
     (newScopedSlots && vm.$scopedSlots.$key !== newScopedSlots.$key)
   )
 
+  /**
+   * vue设计的时候组件的更新粒度是组件级别，所以当父组件更新的时候，有时候不会引起子组件的更新
+   * 有以下两种情况，子组件就要进行相应的更新
+   * 1.在下面update props，当父组件传入子组件的props改变
+   * 2.当子组件有插槽，因为有些插槽是在父组件初始化的，子组件可能会收集不到依赖，所以档子组件有插槽的时候，要进行更新
+   */
   // Any static slot children from the parent may have changed during parent's
   // update. Dynamic scoped slots may also have changed. In such cases, a forced
   // update is necessary to ensure correctness.
