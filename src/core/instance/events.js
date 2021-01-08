@@ -14,6 +14,7 @@ export function initEvents (vm: Component) {
   vm._hasHookEvent = false
   // init parent attached events
   const listeners = vm.$options._parentListeners
+  // 初始化只会挂载事件
   if (listeners) {
     updateComponentListeners(vm, listeners)
   }
@@ -45,6 +46,11 @@ export function updateComponentListeners (
   oldListeners: ?Object
 ) {
   target = vm
+  /**
+   * 初始化挂载和更新原生dom事件也会调用这个方法
+   * 只是传入的 add, remove 方法不一样
+   */
+
   updateListeners(listeners, oldListeners || {}, add, remove, createOnceHandler, vm)
   target = undefined
 }

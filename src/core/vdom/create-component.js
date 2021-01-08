@@ -32,6 +32,9 @@ import {
   renderRecyclableComponentTemplate
 } from 'weex/runtime/recycle-list/render-component-template'
 
+/**
+ * 组件实例是在 patch 阶段创建的
+ */
 // inline hooks to be invoked on component VNodes during patch
 const componentVNodeHooks = {
   init (vnode: VNodeWithData, hydrating: boolean): ?boolean {
@@ -44,6 +47,9 @@ const componentVNodeHooks = {
       const mountedNode: any = vnode // work around flow
       componentVNodeHooks.prepatch(mountedNode, mountedNode)
     } else {
+      /**
+       * 根据虚拟dom节点，创建组件实例
+       */
       const child = vnode.componentInstance = createComponentInstanceForVnode(
         vnode,
         activeInstance
@@ -163,9 +169,19 @@ export function createComponent (
     return createFunctionalComponent(Ctor, propsData, data, context, children)
   }
 
+  /**
+   * data.on 在组件上表示绑定在组件的事件
+   */
   // extract listeners, since these needs to be treated as
   // child component listeners instead of DOM listeners
   const listeners = data.on
+
+  /**
+   * data.nativeOn 表示需要绑定在原生dom上的事件
+   * data.on = data.nativeOn 赋值给了 data.on
+   * 因为在由虚拟Node创建真实domd的时候 
+   * data.on 会绑定在真实dom上
+   */
   // replace with listeners with .native modifier
   // so it gets processed during parent component patch.
   data.on = data.nativeOn
