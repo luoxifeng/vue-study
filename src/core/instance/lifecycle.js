@@ -205,7 +205,6 @@ export function mountComponent (
     }
   } else {
     updateComponent = () => {
-      debugger
       vm._update(vm._render(), hydrating)
     }
   }

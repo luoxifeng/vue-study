@@ -54,6 +54,7 @@ const componentVNodeHooks = {
         vnode,
         activeInstance
       )
+      debugger
       child.$mount(hydrating ? vnode.elm : undefined, hydrating)
     }
   },

@@ -107,6 +107,7 @@ var app = new Vue({
   // methods that implement data logic.
   // note there's no DOM manipulation here at all.
   methods: {
+    foo() {}
   },
 
   // a custom directive to wait for the DOM to be updated
