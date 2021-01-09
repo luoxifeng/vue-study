@@ -205,6 +205,7 @@ export function mountComponent (
     }
   } else {
     updateComponent = () => {
+      debugger
       vm._update(vm._render(), hydrating)
     }
   }
@@ -301,6 +302,7 @@ export function updateChildComponent (
 
   // update listeners
   listeners = listeners || emptyObject
+  // 老的事件
   const oldListeners = vm.$options._parentListeners
   vm.$options._parentListeners = listeners
   updateComponentListeners(vm, listeners, oldListeners)
