@@ -76,7 +76,6 @@ export function addHandler (
   range?: Range,
   dynamic?: boolean
 ) {
-  debugger
   modifiers = modifiers || emptyObject
   // warn prevent and passive modifier
   /* istanbul ignore if */

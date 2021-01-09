@@ -16,7 +16,6 @@ export default function model (
   dir: ASTDirective,
   _warn: Function
 ): ?boolean {
-  debugger
   warn = _warn
   const value = dir.value
   const modifiers = dir.modifiers

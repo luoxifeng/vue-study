@@ -11,7 +11,10 @@
      
       <input v-model="a.b.c.d" g="9" :h="89" @click="foo">
       <mytest :d="d" ll="ddd" v-model="a.b.c.d" @fbc="foo" @fc.native="foo">
-       
+        <template slot='asc'>11111</template>
+        <template v-slot:asd="{ds}" jj="ddd">
+         <div>{{ds}}</div>
+        </template>
       </mytest>
     </section>
     <script src="../../dist/vue.js"></script>

@@ -12,7 +12,10 @@ var cfg = {
   data() {
     // debugger
     return {
-      s: 1551
+      s: 1551,
+      k: {
+        ds: 123
+      }
     };
   },
   computed: {
@@ -32,8 +35,9 @@ var cfg = {
   template: `
     <div class="blog-post" >
       <h3>{{ s }}</h3>
-      {{$listeners}}
       <h3>{{ d }}</h3>
+      <slot name="asc"/>
+      <slot name="asd" v-bind="k" kk="123"/>
     </div>
   `
 }
