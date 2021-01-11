@@ -139,7 +139,6 @@ export function parse (
       if (element.elseif || element.else) {
         processIfConditions(element, currentParent)
       } else {
-        debugger
         if (element.slotScope) {
           // scoped slot
           // keep it in the children list so that v-else(-if) conditions can

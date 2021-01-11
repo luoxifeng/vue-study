@@ -27,9 +27,11 @@ var cfg = {
     console.warn('child mytest created')
   },
   beforeMount() {
+    debugger
     console.warn('child mytest beforeMount')
   },
   mounted() {
+    debugger
     console.warn('child mytest mounted')
   },
   template: `
@@ -38,12 +40,29 @@ var cfg = {
       <h3>{{ d }}</h3>
       <slot name="asc"/>
       <slot name="asd" v-bind="k" kk="123"/>
+      <div><sss/></div>
     </div>
   `
 }
 var com = Vue.component('mytest', cfg)
 
 Vue.component('ytest2', cfg)
+
+Vue.component('sss', {
+  template: `
+  <div class="blog" >
+  </div>
+`,
+beforeMount() {
+  debugger
+  console.warn('sss sss beforeMount')
+},
+mounted() {
+  debugger
+  console.warn('sss sss mounted')
+},
+
+})
 
 
 var app = new Vue({
@@ -89,9 +108,12 @@ var app = new Vue({
     // })
   },
   beforeMount() {
+    debugger
     console.warn('root component beforeMount')
   },
   mounted() {
+    debugger
+
     console.warn('root component mounted')
   },
   mixins: [
