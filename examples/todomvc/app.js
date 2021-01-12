@@ -75,7 +75,8 @@ var app = new Vue({
         }
       }
     },
-    d: 1258
+    d: 1258,
+    kk: 'asd'
   },
   // watch todos change for localStorage persistence
   // watch: {
