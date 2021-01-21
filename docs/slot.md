@@ -19,3 +19,5 @@
 
 ## slot update
 
+## slot 对子组件重新渲染的影响
+
