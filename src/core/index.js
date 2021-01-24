@@ -10,10 +10,16 @@ import { FunctionalRenderContext } from 'core/vdom/create-functional-component'
  */
 initGlobalAPI(Vue)
 
+/**
+ * 是不是服务端渲染
+ */
 Object.defineProperty(Vue.prototype, '$isServer', {
   get: isServerRendering
 })
 
+/**
+ * 服务端渲染上下文
+ */
 Object.defineProperty(Vue.prototype, '$ssrContext', {
   get () {
     /* istanbul ignore next */
@@ -26,6 +32,10 @@ Object.defineProperty(Vue, 'FunctionalRenderContext', {
   value: FunctionalRenderContext
 })
 
+/**
+ * Vue 版本
+ * 在编译输出的时候__VERSION__会被替换成Vue当前的版本
+ */
 Vue.version = '__VERSION__'
 
 export default Vue
