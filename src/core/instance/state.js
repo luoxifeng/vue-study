@@ -331,6 +331,19 @@ export function stateMixin (Vue: Class<Component>) {
   // flow somehow has problems with directly declared definition object
   // when using Object.defineProperty, so we have to procedurally build up
   // the object here.
+  /**
+   * 代理内部属性的访问
+   * 使用$data代理_data
+   * 使用$props代理_props
+   * 他们都是只读属性，在开发环境下，更改他们会提示报错
+   * 调用这个函数的时候,只是去代理了数据的访问，其实_data，_props
+   * 在这个时候还没有定义，当实例化以后才会存在，
+   * 那个时候再去访问，就是有值的了，
+   * 这里只是定义访问的代理，至于为什么要这么做，而不是直接访问
+   * 1.如果后期内部名称变动的时候，外部的访问方式依然不会变，保持api的兼容性
+   * 2.直接访问，我们在书写的时候，可能会不小心直接更改了，做层代理相当于增加一层保障
+   *  在我们直接去修的时候，非生产环境下，进入set函数会提示我们不能修改
+   */
   const dataDef = {}
   dataDef.get = function () { return this._data }
   const propsDef = {}
