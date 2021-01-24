@@ -81,7 +81,8 @@ export function initGlobalAPI (Vue: GlobalAPI) {
   }
 
   /**
-   * 默认配置
+   * 初始化全局的
+   * components, directives, filters
    */
   Vue.options = Object.create(null)
   ASSET_TYPES.forEach(type => {
