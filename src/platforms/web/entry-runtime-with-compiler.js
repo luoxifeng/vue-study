@@ -13,8 +13,15 @@ const idToTemplate = cached(id => {
   const el = query(id)
   return el && el.innerHTML
 })
+
 /**
  * 覆写$mount方法
+ * 原始的$mount的方法只有调用render函数渲染的过程，编译的工作是交给webpack等工具完成的
+ * 经过这些编译工具处理以后，vue文件的template会被编译成render函数，
+ * 在运行时的时候其实是不需要再处理template到render函数的过程
+ * 但是在没有借助编译工具的情况下，在页面使用Vue的时候，是需要引入带编译功能的包，
+ * 在$mount阶段是需要compileToFunctions把template编译成render函数，
+ * 然后在调用原始的$mount函数，接下来的步骤是一样
  */
 const mount = Vue.prototype.$mount
 Vue.prototype.$mount = function (
