@@ -71,6 +71,14 @@ Vue.prototype.$mount = function (
         mark('compile')
       }
 
+      /**
+       * 编译成渲染函数，赋值给options
+       * 在原始的mount内部其实是就调用的options上的render函数
+       * 所以在真正走到原本mount阶段之前，我们编译template到render
+       * 然后赋值到options上面，最终mount的时候就已经有了render
+       * 这里其实就是抹平和构建方式的区别（添加render函数）
+       * 
+       */
       const { render, staticRenderFns } = compileToFunctions(template, {
         outputSourceRange: process.env.NODE_ENV !== 'production',
         shouldDecodeNewlines,
@@ -88,6 +96,8 @@ Vue.prototype.$mount = function (
       }
     }
   }
+
+  // 进行mount流程
   return mount.call(this, el, hydrating)
 }
 
