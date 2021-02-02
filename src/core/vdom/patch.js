@@ -32,6 +32,7 @@ export const emptyNode = new VNode('', {}, [])
 
 const hooks = ['create', 'activate', 'update', 'remove', 'destroy']
 
+// 是不是同一个虚拟节点
 function sameVnode (a, b) {
   return (
     a.key === b.key && (
@@ -49,6 +50,7 @@ function sameVnode (a, b) {
   )
 }
 
+// 判断是不是一样的input
 function sameInputType (a, b) {
   if (a.tag !== 'input') return true
   let i
