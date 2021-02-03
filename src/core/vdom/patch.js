@@ -59,6 +59,13 @@ function sameInputType (a, b) {
   return typeA === typeB || isTextInputType(typeA) && isTextInputType(typeB)
 }
 
+/**
+ * 根据节点的key,把子元素列表变成映射，
+ * 以便直接根据key值找到可以重用的子节点
+ * @param {*} children 
+ * @param {*} beginIdx 
+ * @param {*} endIdx 
+ */
 function createKeyToOldIdx (children, beginIdx, endIdx) {
   let i, key
   const map = {}
