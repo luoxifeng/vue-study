@@ -221,6 +221,7 @@ export function createComponent (
   return vnode
 }
 
+// 创建组件实例，根据vnode上面的componentOption配置
 export function createComponentInstanceForVnode (
   vnode: any, // we know it's MountedComponentVNode but flow doesn't
   parent: any, // activeInstance in lifecycle state
@@ -261,6 +262,12 @@ function mergeHook (f1: any, f2: any): Function {
   return merged
 }
 
+/**
+ * 转换v-model指令成data上面的属性
+ * 自定义组件上面的v-model和原生标签的v-model处理是不一样的
+ * @param {*} options 
+ * @param {*} data 
+ */
 // transform component v-model info (value and callback) into
 // prop and event handler respectively.
 function transformModel (options, data: any) {
