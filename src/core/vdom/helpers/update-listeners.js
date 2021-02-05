@@ -50,6 +50,7 @@ export function createFnInvoker (fns: Function | Array<Function>, vm: ?Component
   return invoker
 }
 
+// 更新绑定的事件
 export function updateListeners (
   on: Object,
   oldOn: Object,
