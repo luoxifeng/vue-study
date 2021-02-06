@@ -80,6 +80,7 @@ export function _createElement (
       )
     }
   }
+  // 如果子节点是数组，且第一个是函数，则把第一个当成是slot处理
   // support single function children as default scoped slot
   if (Array.isArray(children) &&
     typeof children[0] === 'function'
@@ -97,7 +98,11 @@ export function _createElement (
   if (typeof tag === 'string') {
     let Ctor
     ns = (context.$vnode && context.$vnode.ns) || config.getTagNamespace(tag)
+    // 原生标签
     if (config.isReservedTag(tag)) {
+      /**
+       * 非生产环境下，原生标签上面绑定事件的时候，不能出现.native，否则会提示
+       */
       // platform built-in elements
       if (process.env.NODE_ENV !== 'production' && isDef(data) && isDef(data.nativeOn)) {
         warn(
