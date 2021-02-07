@@ -60,6 +60,8 @@ export function _createElement (
     )
     return createEmptyVNode()
   }
+
+  // 动态组件 data.is 可能是字符串，也可能是组件的配置
   // object syntax in v-bind
   if (isDef(data) && isDef(data.is)) {
     tag = data.is
