@@ -160,7 +160,10 @@ function applyNS (vnode, ns, force) {
     }
   }
 }
-
+/**
+ * 如果style以及class 是对象形式的
+ * 需要进行响应式
+ */
 // ref #5318
 // necessary to ensure parent re-render when deep bindings like :style and
 // :class are used on slot nodes
