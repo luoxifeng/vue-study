@@ -143,6 +143,12 @@ export function _createElement (
   }
 }
 
+/**
+ * 处理带有命名空间的标签
+ * @param {*} vnode 
+ * @param {*} ns 
+ * @param {*} force 
+ */
 function applyNS (vnode, ns, force) {
   vnode.ns = ns
   if (vnode.tag === 'foreignObject') {
