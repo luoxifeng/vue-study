@@ -11,6 +11,9 @@ import {
   isPlainObject
 } from 'shared/util'
 
+/**
+ * 规范化事件修饰符
+ */
 const normalizeEvent = cached((name: string): {
   name: string,
   once: boolean,

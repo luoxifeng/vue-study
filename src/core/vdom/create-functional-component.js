@@ -17,6 +17,14 @@ import {
   validateProp
 } from '../util/index'
 
+/**
+ * 函数组件上下文
+ * @param {*} data 
+ * @param {*} props 
+ * @param {*} children 
+ * @param {*} parent 
+ * @param {*} Ctor 
+ */
 export function FunctionalRenderContext (
   data: VNodeData,
   props: Object,
