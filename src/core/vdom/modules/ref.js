@@ -56,8 +56,11 @@ export function registerRef (vnode: VNodeWithData, isRemoval: ?boolean) {
     } else if (refs[key] === ref) {
       refs[key] = undefined
     }
-  } else {
-    // 新注册
+  } else { // 新注册
+    /**
+     * 如果是在for循环之中，
+     * 需要注册成数组，同时需要规避重复添加
+     */
     if (vnode.data.refInFor) {
       if (!Array.isArray(refs[key])) {
         refs[key] = [ref]
