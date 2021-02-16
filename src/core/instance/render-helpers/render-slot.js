@@ -5,7 +5,7 @@ import { extend, warn, isObject } from 'core/util/index'
 /**
  * 渲染插槽
  * Runtime helper for rendering <slot>
- * 运行时渲染工具函数 target._u = resolveScopedSlots
+ * 运行时渲染工具函数 target._t = renderSlot
  */
 export function renderSlot (
   name: string,

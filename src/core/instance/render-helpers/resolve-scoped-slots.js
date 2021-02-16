@@ -1,5 +1,26 @@
 /* @flow */
-
+/**
+ * 处理作用域插槽
+ * 运行时作为渲染函数的help工具
+ * target._u = resolveScopedSlots
+ * 作用是把作用域插槽变成对象映
+ * {
+ *    default() {},
+ *    foo() {}
+ * }
+ * 如果我们在写jsx的时候，是直接可以写成这样子的
+ * 作用域插槽是作用组件的属性存在侧
+ * <Foo
+ *    scopedSlots={{
+ *      default() {},
+ *      foo() {}
+ *    }}
+ * />
+ * @param {*} fns 
+ * @param {*} res 
+ * @param {*} hasDynamicKeys 
+ * @param {*} contentHashKey 
+ */
 export function resolveScopedSlots (
   fns: ScopedSlotsData, // see flow/vnode
   res?: Object,
