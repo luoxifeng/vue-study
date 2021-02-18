@@ -76,6 +76,11 @@ function createKeyToOldIdx (children, beginIdx, endIdx) {
   return map
 }
 
+/**
+ * 此处为高阶函数，作为patch函数的工厂
+ * 这样做的好处是，提前注入环境api,抹平差异，避免多次判断，
+ * 具体处理的时候是不用关心环境的，
+ */
 export function createPatchFunction (backend) {
   let i, j
   const cbs = {}
