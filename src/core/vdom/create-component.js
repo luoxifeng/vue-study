@@ -104,6 +104,14 @@ const componentVNodeHooks = {
 
 const hooksToMerge = Object.keys(componentVNodeHooks)
 
+/**
+ * render阶段调用，创建组件的占位节点
+ * @param {*} Ctor 
+ * @param {*} data 
+ * @param {*} context 
+ * @param {*} children 
+ * @param {*} tag 
+ */
 export function createComponent (
   Ctor: Class<Component> | Function | Object | void,
   data: ?VNodeData,
@@ -156,6 +164,9 @@ export function createComponent (
   // component constructor creation
   resolveConstructorOptions(Ctor)
 
+  /**
+   * ! 处理v-model, 组件v-model语法糖的原理
+   */
   // transform component v-model data into props & events
   if (isDef(data.model)) {
     transformModel(Ctor.options, data)
@@ -198,6 +209,12 @@ export function createComponent (
     }
   }
 
+  /**
+   * ! 这一步非常关键，在render阶段创建组件占位节点
+   * ! 把组件的钩子函数，挂载到占位节点的data.hook上
+   * ! 在patch阶段调用patch工厂函数内的createComponent(core/vdom/patch)方法
+   * ! 通过调用占位节点的data.hook.init钩子实例化组件实例
+   */
   // install component management hooks onto the placeholder node
   installComponentHooks(data)
 
