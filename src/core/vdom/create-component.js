@@ -58,6 +58,11 @@ const componentVNodeHooks = {
     }
   },
 
+  /**
+   * 组件更新阶段执行，第一次初始化组件不会执行
+   * @param {*} oldVnode 
+   * @param {*} vnode 
+   */
   prepatch (oldVnode: MountedComponentVNode, vnode: MountedComponentVNode) {
     const options = vnode.componentOptions
     const child = vnode.componentInstance = oldVnode.componentInstance
@@ -70,6 +75,13 @@ const componentVNodeHooks = {
     )
   },
 
+  /**
+   * 第一次初始化组件，dom插入到文档流以后执行
+   * 注意在patch阶段生成真实dom会插入到父dom节点，这个时候父节点可能还不在文档流
+   * 但是这时候并不会调用，只有所有组件都完成patch,
+   * 并且插入到文档流以后才会调用
+   * @param {*} vnode 
+   */
   insert (vnode: MountedComponentVNode) {
     const { context, componentInstance } = vnode
     if (!componentInstance._isMounted) {
