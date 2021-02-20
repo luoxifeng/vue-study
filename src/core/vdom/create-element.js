@@ -193,9 +193,14 @@ function applyNS (vnode, ns, force) {
     }
   }
 }
+
 /**
- * 如果style以及class 是对象形式的
- * 需要进行响应式
+ * 如果style以及class 是对象形式的，需要进行依赖收集
+ * 因为对象类型的style,class在render阶段收集依赖的时候
+ * 只收集到了对象这个级别，对象的属性级别的改变，并没有收集到
+ * 但是大多数场景下，我们仅仅是改变了对象的属性，而没有改变对象的引用，
+ * 这个时候就不会重新渲染，这不是我们想要的效果
+ * 所以这地方需要深层次的访问对象，以完成对于属性的收集
  */
 // ref #5318
 // necessary to ensure parent re-render when deep bindings like :style and
