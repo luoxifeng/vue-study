@@ -23,6 +23,33 @@ import {
 const SIMPLE_NORMALIZE = 1
 const ALWAYS_NORMALIZE = 2
 
+/**
+ * 创建vNode的入口
+ * render阶段调用，只是创建原生标签或者自定义组件的vNode,
+ * 最终构建成一个虚拟dom树
+ * patch阶段也有一个createEle的方法，是根据这一步创建的dom树，
+ * 递归地创建真实Dom,同时根据组件的占位节点实例化组件以及创建组件的虚拟Dom结构和真实Dom
+ * 在创建组件虚拟dom的时候同样也会走到这一步，然后在根据这一步创建的vNode创建patch成真实Dom
+ * 在组件构建真实Dom的时候，遇到子组件依然后重复上述步骤创建子组件的虚拟Dom以及真实Dom
+ * 也就是说整个Dom的构建其实就是从根组件开始，先render构建成vNode, 根据vNode树patch成真实Dom,
+ * 在patch阶段又会走到render -> vNode -> patch -> Dom
+ * 整体过程如下
+ *   ---------------------------------
+ *  | render -> vNode -> patch -> Dom |
+ *   ---------------------------------
+ *                      /   
+ *                     /
+ *                    /
+ *                    ---------------------------------
+ *                   | render -> vNode -> patch -> Dom |
+ *                    ---------------------------------
+ *                                         /   
+ *                                        /
+ *                                       /
+ *                                       ---------------------------------
+ *                                      | render -> vNode -> patch -> Dom |
+ *                                       ---------------------------------
+ */
 // wrapper function for providing a more flexible interface
 // without getting yelled at by flow
 export function createElement (
