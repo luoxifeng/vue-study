@@ -300,14 +300,19 @@ function mergeHook (f1: any, f2: any): Function {
 }
 
 /**
- * 转换v-model指令成data上面的属性
- * 自定义组件上面的v-model和原生标签的v-model处理是不一样的
+ * ! 你在自定义组件的时候使用了v-model，
+ * ! 在编译阶段以后v-model会被生成 model: { value, callback },存在于vnode.data
+ * ! render阶段，在创建vnode的时候，如果vnode.data上存在model
+ * ! 需要对vnode.data做转换，
  * @param {*} options 
  * @param {*} data 
  */
 // transform component v-model info (value and callback) into
 // prop and event handler respectively.
 function transformModel (options, data: any) {
+  /**
+   * 
+   */
   const prop = (options.model && options.model.prop) || 'value'
   const event = (options.model && options.model.event) || 'input'
   ;(data.attrs || (data.attrs = {}))[prop] = data.model.value
