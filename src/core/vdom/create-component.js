@@ -311,14 +311,22 @@ function mergeHook (f1: any, f2: any): Function {
 // prop and event handler respectively.
 function transformModel (options, data: any) {
   /**
-   * 
+   * 根据配置为model上的value以及默认要绑定的事件名重命名
    */
   const prop = (options.model && options.model.prop) || 'value'
   const event = (options.model && options.model.event) || 'input'
+  /**
+   * 赋值到data.attrs，为了下一步extractPropsFromVNodeData
+   * 从attrs抽取出propsData
+   */
   ;(data.attrs || (data.attrs = {}))[prop] = data.model.value
   const on = data.on || (data.on = {})
   const existing = on[event]
   const callback = data.model.callback
+  /**
+   * 已经绑定过，验证当前要绑定的和之前的是不是重复
+   * 避免重复绑定
+   */
   if (isDef(existing)) {
     if (
       Array.isArray(existing)
@@ -327,7 +335,7 @@ function transformModel (options, data: any) {
     ) {
       on[event] = [callback].concat(existing)
     }
-  } else {
+  } else { // 如果没有绑定过就绑定
     on[event] = callback
   }
 }
