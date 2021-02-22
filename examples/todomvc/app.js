@@ -8,6 +8,9 @@ var STORAGE_KEY = 'todos-vuejs-2.0'
 //   alert()
 // })
 var cfg = {
+  model: {
+    event: 'inputs'
+  },
   props: ['hh', 'd'],
   data() {
     // debugger
@@ -27,11 +30,9 @@ var cfg = {
     console.warn('child mytest created')
   },
   beforeMount() {
-    debugger
     console.warn('child mytest beforeMount')
   },
   mounted() {
-    debugger
     console.warn('child mytest mounted')
   },
   template: `
@@ -54,11 +55,9 @@ Vue.component('sss', {
   </div>
 `,
 beforeMount() {
-  debugger
   console.warn('sss sss beforeMount')
 },
 mounted() {
-  debugger
   console.warn('sss sss mounted')
 },
 
@@ -76,7 +75,8 @@ var app = new Vue({
       }
     },
     d: 1258,
-    kk: 'asd'
+    kk: 'asd',
+    hoo: [() => {}]
   },
   // watch todos change for localStorage persistence
   // watch: {
@@ -109,12 +109,9 @@ var app = new Vue({
     // })
   },
   beforeMount() {
-    debugger
     console.warn('root component beforeMount')
   },
   mounted() {
-    debugger
-
     console.warn('root component mounted')
   },
   mixins: [
@@ -134,7 +131,8 @@ var app = new Vue({
   // methods that implement data logic.
   // note there's no DOM manipulation here at all.
   methods: {
-    foo() {}
+    foo() {},
+    moo() {}
   },
 
   // a custom directive to wait for the DOM to be updated

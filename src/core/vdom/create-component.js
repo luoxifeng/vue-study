@@ -310,8 +310,10 @@ function mergeHook (f1: any, f2: any): Function {
 // transform component v-model info (value and callback) into
 // prop and event handler respectively.
 function transformModel (options, data: any) {
+  debugger
   /**
    * 根据配置为model上的value以及默认要绑定的事件名重命名
+   * 从这里的源码可以看出默认情况下属性的值是 ‘value’ 回调函数的名字是 'input'
    */
   const prop = (options.model && options.model.prop) || 'value'
   const event = (options.model && options.model.event) || 'input'
@@ -323,9 +325,13 @@ function transformModel (options, data: any) {
   const on = data.on || (data.on = {})
   const existing = on[event]
   const callback = data.model.callback
+
   /**
-   * 已经绑定过，验证当前要绑定的和之前的是不是重复
-   * 避免重复绑定
+   * 已经绑定过同类事件，验证当前要绑定的和之前的是不是重复，避免重复绑定
+   * 一般情况下，生成的vnode是不会有同类事件已经绑定过得
+   * 当 <SomeComponent v-model="xyz" @xxx='foo' @yyy='moo' />
+   * 组件显式的绑定了和上一步event变量值相等的函数名，就会走到这个条件
+   * 上面例子中foo，moo可能是函数数组，所以才有了对于数组的判断
    */
   if (isDef(existing)) {
     if (
