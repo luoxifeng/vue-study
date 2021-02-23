@@ -307,9 +307,21 @@ function installComponentHooks (data: VNodeData) {
    * )
    * 从结果看这种方式实现了注入hook
    *
-   * 2.手动
-   * 
-   * 
+   * 2.手写render函数
+   * export default {
+   *  render(h) {
+   *    return  h(SomeComponent, {
+   *      attrs: { foo: 123 },
+   *      hook: {
+   *        insert() {}
+   *      }
+   *    })
+   *  }
+   * }
+   * 如上所示，就可以实现注入hook,其实这种方式和jsx编译的结果比较类似
+   * jsx最终也是要处理成这样，结果是一样的，并且vue-router内部也是这样做的，
+   * 如果你想控制组件的生命周期过程也常常会采用这种方式，
+   * 不用借助jsx编译，一般组件库内部也会使用这种方式
    */
   debugger
   const hooks = data.hook || (data.hook = {})

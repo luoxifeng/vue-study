@@ -147,9 +147,20 @@ var app = new Vue({
         el.focus()
       }
     }
+  },
+  render(h) {
+    return h(
+      cfg, 
+      { 
+        attrs: { ff: 123 },
+        hook: {
+          insert(){}
+        }
+      }
+    )
   }
 })
 
-app.$mount('.todoapp')
+app.$mount('.todoapp1')
 
 window.app = app;
