@@ -19,7 +19,7 @@ var cfg = {
       k: {
         ds: 123
       },
-     
+      
     };
   },
   computed: {
@@ -28,6 +28,7 @@ var cfg = {
     },
   },
   created() {
+    window.mytest = this;
     console.warn('child mytest created')
   },
   beforeMount() {
@@ -40,7 +41,7 @@ var cfg = {
     <div class="blog-post" >
       <h3>{{ s }}</h3>
       <h3>{{ d }}</h3>
-      <slot name="asc"/>
+      <slot name="asc" />
       <slot name="asd" v-bind="k" kk="123"/>
       <div><sss/></div>
     </div>
@@ -79,6 +80,9 @@ var app = new Vue({
     hoo: [() => {}],
     hook: {
       insert: [() => {}]
+    },
+    cls: {
+      'teststatic': true
     }
   },
   // watch todos change for localStorage persistence
@@ -148,19 +152,19 @@ var app = new Vue({
       }
     }
   },
-  render(h) {
-    return h(
-      cfg, 
-      { 
-        attrs: { ff: 123 },
-        hook: {
-          insert(){}
-        }
-      }
-    )
-  }
+  // render(h) {
+  //   return h(
+  //     cfg, 
+  //     { 
+  //       attrs: { ff: 123 },
+  //       hook: {
+  //         insert(){}
+  //       }
+  //     }
+  //   )
+  // }
 })
 
-app.$mount('.todoapp1')
+app.$mount('.todoapp')
 
 window.app = app;

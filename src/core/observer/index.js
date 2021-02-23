@@ -158,6 +158,9 @@ export function defineReactive (
     enumerable: true,
     configurable: true,
     get: function reactiveGetter () {
+      if (key === 'teststatic') {
+        debugger
+      }
       const value = getter ? getter.call(obj) : val
       if (Dep.target) {
         dep.depend()
@@ -175,6 +178,7 @@ export function defineReactive (
       return value
     },
     set: function reactiveSetter (newVal) {
+
       const value = getter ? getter.call(obj) : val
       /* eslint-disable no-self-compare */
       if (newVal === value || (newVal !== newVal && value !== value)) {

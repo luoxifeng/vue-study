@@ -195,12 +195,20 @@ function applyNS (vnode, ns, force) {
 }
 
 /**
- * 如果style以及class 是对象形式的，需要进行依赖收集
- * 因为对象类型的style,class在render阶段收集依赖的时候
- * 只收集到了对象这个级别，对象的属性级别的改变，并没有收集到
- * 但是大多数场景下，我们仅仅是改变了对象的属性，而没有改变对象的引用，
- * 这个时候就不会重新渲染，这不是我们想要的效果
- * 所以这地方需要深层次的访问对象，以完成对于属性的收集
+ * 如果style以及class 是对象形式的，用在插槽上需要进行深层依赖收集，为什么这样做呢？
+ * 
+ * 1.普通节点
+ * 在render阶段，取style,class的值的时候，会收集到当前组件的renderWatch
+ * 在pacth阶段，会对style,class做stringify的时候，会取到属性style,class上面的属性，这样就属性也可以收集到当前组件的renderWatch
+ * 所以在普通节点上使用动态的对象形式的style,class, 里面属性的改变会引起render,所以不需要做这一步操作也是可以的，
+ * 
+ * 2.插槽节点
+ * 在render阶段，取style,class的值的时候，会收集到当前组件的renderWatch
+ * 但是插槽节点作为子组件的children, patch是在子组件完成的，stringify的时候收集到的是子组件的renderWatch，
+ * 当在父组件更改style,class上面属性的时候，并不会引起父组件的重新渲染，
+ * 为了让当前组件（父组件）能重新渲染，所以需要在当前组件创建插槽节点vnode的时候，
+ * 手动强制深度访问style,class上面的属性，去完成属性dep对当前组件renderWtach收集
+ * 于是有了下面的步骤
  */
 // ref #5318
 // necessary to ensure parent re-render when deep bindings like :style and

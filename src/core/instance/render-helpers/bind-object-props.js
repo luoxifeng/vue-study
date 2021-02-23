@@ -23,7 +23,6 @@ export function bindObjectProps (
   asProp: boolean,
   isSync?: boolean
 ): VNodeData {
-  debugger
   if (value) {
     if (!isObject(value)) {
       process.env.NODE_ENV !== 'production' && warn(

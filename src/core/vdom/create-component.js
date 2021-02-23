@@ -323,7 +323,6 @@ function installComponentHooks (data: VNodeData) {
    * 如果你想控制组件的生命周期过程也常常会采用这种方式，
    * 不用借助jsx编译，一般组件库内部也会使用这种方式
    */
-  debugger
   const hooks = data.hook || (data.hook = {})
   for (let i = 0; i < hooksToMerge.length; i++) {
     const key = hooksToMerge[i]
