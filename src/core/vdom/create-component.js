@@ -277,7 +277,41 @@ export function createComponentInstanceForVnode (
   return new vnode.componentOptions.Ctor(options)
 }
 
+/**
+ * 自定义组件在特定阶段都有自己的钩子，在render,patch阶段都会调用这些函数
+ * 这个方法就是把框架内部默认的组件钩子，以及用户配置的钩子做一个合并
+ */
 function installComponentHooks (data: VNodeData) {
+  /**
+   * 默认情况下data.hook是没有值的但有以下情况可以注入
+   * 
+   * 1.jsx情况下使用扩展运算符展开对象属性， hook会和attrs并列都属于data, data: { attrs, hook }
+   * <SomeComponent {...{ hook: {insert() {} }}} foo='123' ref='xxx'/>
+   * 以上会被编译成
+   * h(
+   *    SomeComponent, 
+   *    mergeJsxProps([
+   *      { attrs: { foo: 123 }},
+   *      { hook: {insert() {} }},
+   *      { ref: 'xxx' }
+   *    ])
+   * )
+   * mergeJsxProps这个方法会把数组规约成一个对象也就是vnode.data,结果如下
+   * h(
+   *    SomeComponent, 
+   *    { 
+   *      attrs: { foo: 123 }
+   *      hook: { insert() {} }
+   *      ref: 'xxx'
+   *    }
+   * )
+   * 从结果看这种方式实现了注入hook
+   *
+   * 2.手动
+   * 
+   * 
+   */
+  debugger
   const hooks = data.hook || (data.hook = {})
   for (let i = 0; i < hooksToMerge.length; i++) {
     const key = hooksToMerge[i]
@@ -310,7 +344,6 @@ function mergeHook (f1: any, f2: any): Function {
 // transform component v-model info (value and callback) into
 // prop and event handler respectively.
 function transformModel (options, data: any) {
-  debugger
   /**
    * 根据配置为model上的value以及默认要绑定的事件名重命名
    * 从这里的源码可以看出默认情况下属性的值是 ‘value’ 回调函数的名字是 'input'

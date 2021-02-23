@@ -18,7 +18,8 @@ var cfg = {
       s: 1551,
       k: {
         ds: 123
-      }
+      },
+     
     };
   },
   computed: {
@@ -63,7 +64,6 @@ mounted() {
 
 })
 
-
 var app = new Vue({
   data: {
     a: {
@@ -76,7 +76,10 @@ var app = new Vue({
     },
     d: 1258,
     kk: 'asd',
-    hoo: [() => {}]
+    hoo: [() => {}],
+    hook: {
+      insert: [() => {}]
+    }
   },
   // watch todos change for localStorage persistence
   // watch: {
