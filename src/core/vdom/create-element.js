@@ -84,6 +84,9 @@ export function _createElement (
   children?: any,
   normalizationType?: number
 ): VNode | Array<VNode> {
+  /**
+   * vue不允许响应式数据作为vnode.data
+   */
   if (isDef(data) && isDef((data: any).__ob__)) {
     process.env.NODE_ENV !== 'production' && warn(
       `Avoid using observed data object as vnode data: ${JSON.stringify(data)}\n` +
@@ -93,7 +96,31 @@ export function _createElement (
     return createEmptyVNode()
   }
 
-  // 动态组件 data.is 可能是字符串，也可能是组件的配置
+  /**
+   * 动态组件 data.is 可能是字符串，也可能是组件的配置
+   * 出现这种情况
+   * <div v-bind="{is: 'xxxx' }" ss="111"> 使用在v-bind语法上
+   * 被编译成 _b({ attrs: { ss: 111 } }, { is: 'xxxx' })
+   * 最终结果为 {
+   *    attrs: { ss: 111 } },
+   *    is: 'xxxx',
+   * } 作为data
+   * 或者自己手写render函数
+   * h(
+   *  'div'，
+   *  {
+   *    attrs: { ss: 111 } },
+   *    is: 'xxxx',
+   *  }
+   * )
+   * 这样也会走到这里
+   * 
+   * 但是一般情况下
+   * <div is='xxxx' ss="111">
+   * 编译的结果，is是作为attrs: { is: 'xxxx' }的属性存在
+   * 不会走到这里
+   * 
+   */
   // object syntax in v-bind
   if (isDef(data) && isDef(data.is)) {
     tag = data.is

@@ -5,12 +5,9 @@
     <title>Vue.js • TodoMVC</title>
   </head>
   <body>
-    <section class="todoapp1" ></section>
     <section class="todoapp" >
-      {{a.s || 1}}
-      {{a.s++}}
-     
-      <input v-model="a.b.c.d" g="9" :h="89" @click="foo">
+      <section v-bind="{is: 'span'}" dd="ddd"></section>
+       <input v-model="a.b.c.d" g="9" :h="89" @click="foo">
       <mytest :d="d" ll="ddd" v-model="a.b.c.d" @inputs="hoo" @fc.native="foo" v-bind="{ hook }" props="hook">
         <div slot='asc' :class="cls" kkkk='123'>11111</div>
         <template v-slot:[kk]="{ds}" jj="ddd" >
