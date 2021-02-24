@@ -60,6 +60,11 @@ export function createElement (
   normalizationType: any,
   alwaysNormalize: boolean
 ): VNode | Array<VNode> {
+  /**
+   * 兼容第二个参数是数组的情况
+   * 当前标签上没有属性的时候会被编译成h('div', [something])
+   * 第二个参数就不是data,而是子节点
+   */
   if (Array.isArray(data) || isPrimitive(data)) {
     normalizationType = children
     children = data
