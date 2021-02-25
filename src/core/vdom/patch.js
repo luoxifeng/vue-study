@@ -552,11 +552,18 @@ export function createPatchFunction (backend) {
        * 旧列表的指针先相遇了，说明新列表里面的节点剩余了
        * 没有在旧列表里面找到相同的，这个时候说明新列表剩下的节点，都是这次新增的需要创建并插到真实Dom
        * 插入Dom的位置是已处理过过得新尾节点之前，这样做的目的是为了保证顺序
-       *
+       * 比如还有三个新节点剩余为 X， Y， Z,已处理的新首对应的Dom为A, 新尾对应的Dom为 D, 最终的结果应该是[..., A, X, Y, Z, D, ...]
+       * 按照下面的步骤
+       * 第一步 X 插到 D 的前面, 结果为 [..., A, X, D, ...]
+       * 第二步 Y 插到 D 的前面, 结果为 [..., A, X, Y, D, ...]
+       * 第三步 Z 插到 D 的前面, 结果为 [..., A, X, Y, Z, D, ...] 符合预期
+       * 如果是查到已处理的新首节点后面经过三步以后得到的结果为 [..., A, Z, Y, X, D, ...] 不符合预期
+       * 其实我们应该保证剩余节点在插入的时候，已经插入的剩余节点，不影响上一步插入节点到起始位置的距离
        */
       refElm = isUndef(newCh[newEndIdx + 1]) ? null : newCh[newEndIdx + 1].elm
       addVnodes(parentElm, refElm, newCh, newStartIdx, newEndIdx, insertedVnodeQueue)
     } else if (newStartIdx > newEndIdx) {
+     
       removeVnodes(oldCh, oldStartIdx, oldEndIdx)
     }
   }
