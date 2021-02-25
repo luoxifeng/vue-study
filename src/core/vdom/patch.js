@@ -563,7 +563,11 @@ export function createPatchFunction (backend) {
       refElm = isUndef(newCh[newEndIdx + 1]) ? null : newCh[newEndIdx + 1].elm
       addVnodes(parentElm, refElm, newCh, newStartIdx, newEndIdx, insertedVnodeQueue)
     } else if (newStartIdx > newEndIdx) {
-     
+       /**
+       * 如果新列表的指针先相遇，说明旧列表的节点有剩余
+       * 我们最终渲染的结果是根据新列表来作为标准的，
+       * 所以旧列表剩余的节点，都应该舍弃从Dom中删除
+       */
       removeVnodes(oldCh, oldStartIdx, oldEndIdx)
     }
   }
