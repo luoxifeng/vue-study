@@ -125,6 +125,7 @@ export function _createElement (
   if (isDef(data) && isDef(data.is)) {
     tag = data.is
   }
+  // 防止is设置为假值
   if (!tag) {
     // in case of component :is set to falsy value
     return createEmptyVNode()
@@ -141,7 +142,9 @@ export function _createElement (
       )
     }
   }
-  // 如果子节点是数组，且第一个是函数，则把第一个当成是slot处理
+  /**
+   * 如果子节点是数组，且第一个是函数，则把第一个当成是slot处理
+   */
   // support single function children as default scoped slot
   if (Array.isArray(children) &&
     typeof children[0] === 'function'

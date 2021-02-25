@@ -269,6 +269,7 @@ const defaultStrat = function (parentVal: any, childVal: any): any {
 
 /**
  * Validate component names
+ * 遍历组件名称一个个验证
  */
 function checkComponents (options: Object) {
   for (const key in options.components) {
@@ -277,12 +278,17 @@ function checkComponents (options: Object) {
 }
 
 export function validateComponentName (name: string) {
+  // 合法的html5标签
   if (!new RegExp(`^[a-zA-Z][\\-\\.0-9_${unicodeRegExp.source}]*$`).test(name)) {
     warn(
       'Invalid component name: "' + name + '". Component names ' +
       'should conform to valid custom element name in html5 specification.'
     )
   }
+  /**
+   * 不能是内建标签slot,component
+   * 以及html的保留标签div,span......
+   */
   if (isBuiltInTag(name) || config.isReservedTag(name)) {
     warn(
       'Do not use built-in or reserved HTML elements as component ' +
@@ -390,6 +396,7 @@ export function mergeOptions (
   child: Object,
   vm?: Component
 ): Object {
+  // 组件名称是否合法
   if (process.env.NODE_ENV !== 'production') {
     checkComponents(child)
   }
