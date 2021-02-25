@@ -417,6 +417,16 @@ export function createPatchFunction (backend) {
   }
 
   function updateChildren (parentElm, oldCh, newCh, insertedVnodeQueue, removeOnly) {
+    /**
+     * 定义
+     * 旧列表：
+     * 开始指针，结束指针，开始节点，结束节点
+     * 新列表：
+     * 开始指针，结束指针，开始节点，结束节点
+     * 注意:
+     * 我们使用旧首，旧尾，新首，新尾来命名列表的未处理的开始节点和结束节点
+     * 他们会跟着指针的移动而改变，但是名字我们不变，注意下
+     */
     let oldStartIdx = 0
     let newStartIdx = 0
     let oldEndIdx = oldCh.length - 1
@@ -436,51 +446,114 @@ export function createPatchFunction (backend) {
       checkDuplicateKeys(newCh)
     }
 
+    /**
+     * 这里是更新节点最关键的部分，使用了四个指针，两对
+     * 每对指针向收缩的方向移动, 每一次循环至少有一个指针在移动
+     * 当循环结束，必有一对指针先相遇，下面是处理指针没有相遇之前的过程
+     */
     while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
-      if (isUndef(oldStartVnode)) {
+      /**
+       * 因为下面的步骤中，在映射寻找阶段，可能会把旧列表中
+       * 与新首节点相同的节点位置清空，所以可能存在有些位置取出的节点为空，
+       * 因此需要再继续移动指针，直到不为空，
+       * 这里面稍微有点绕，可以看映射查找阶段 oldCh[idxInOld] = undefined 这行代码
+       * 在回头看这里的代码，也会就明白了
+       */
+      if (isUndef(oldStartVnode)) { 
         oldStartVnode = oldCh[++oldStartIdx] // Vnode has been moved left
       } else if (isUndef(oldEndVnode)) {
         oldEndVnode = oldCh[--oldEndIdx]
       } else if (sameVnode(oldStartVnode, newStartVnode)) {
+        /**
+         * 当旧首节点和新首节点是同一个节点的时候
+         * 对比新旧节点，位置不做移动，
+         * 同时新旧开始指针向后移动一位，
+         * 根据当前指针位置，取出节点作为当前旧首节点，新首节点
+         */
         patchVnode(oldStartVnode, newStartVnode, insertedVnodeQueue, newCh, newStartIdx)
         oldStartVnode = oldCh[++oldStartIdx]
         newStartVnode = newCh[++newStartIdx]
       } else if (sameVnode(oldEndVnode, newEndVnode)) {
+        /**
+         * 当旧尾节点和新尾节点是同一个节点的时候
+         * 对比新旧节点，位置不做移动，
+         * 同时新旧指针向前移动一位
+         * 根据当前指针位置，取出节点作为当前旧尾节点，新尾节点
+         */
         patchVnode(oldEndVnode, newEndVnode, insertedVnodeQueue, newCh, newEndIdx)
         oldEndVnode = oldCh[--oldEndIdx]
         newEndVnode = newCh[--newEndIdx]
       } else if (sameVnode(oldStartVnode, newEndVnode)) { // Vnode moved right
+        /**
+         * 当旧首节点和新尾节点是同一个节点的时候
+         * 对比新旧节点，同时在真实Dom中的位置位置需要做移动，移动的标准是根据当前新节点的位置
+         * 当前这种情况下，应该把旧首节点对应的Dom移动到Dom中未处理的dom节点后面
+         * 因为Dom中没有插入某个元素之后的方法，下面代码中使用的是环境的insertBefore方法，
+         * 但是参照Dom取得的nodeOps.nextSibling(oldEndVnode.elm)，是未处理Dom的下一个Dom
+         * 插入到这个元素的前面，其实就是我们说的未处理元素的后面
+         * 然后移动指针，旧首指针向后移动一位同时取出接节点作为当前未处理的旧首节点
+         * 新尾指针向前移动一位同时取出接节点作为当前未处理的新尾节点
+         */
         patchVnode(oldStartVnode, newEndVnode, insertedVnodeQueue, newCh, newEndIdx)
         canMove && nodeOps.insertBefore(parentElm, oldStartVnode.elm, nodeOps.nextSibling(oldEndVnode.elm))
         oldStartVnode = oldCh[++oldStartIdx]
         newEndVnode = newCh[--newEndIdx]
       } else if (sameVnode(oldEndVnode, newStartVnode)) { // Vnode moved left
+        /**
+         * 当旧尾节点和新首节点是同一个节点的时候
+         * 对比新旧节点，同时在真实Dom中的位置位置需要做移动，移动的标准是根据当前新节点的位置
+         * 当前这种情况下，应该把旧首节点对应的Dom移动到Dom中未处理的dom节点前面
+         * 然后移动指针，旧尾指针向前移动一位同时取出接节点作为当前未处理的旧尾节点
+         * 新首指针向后移动一位同时取出接节点作为当前未处理的新首节点
+         */
         patchVnode(oldEndVnode, newStartVnode, insertedVnodeQueue, newCh, newStartIdx)
         canMove && nodeOps.insertBefore(parentElm, oldEndVnode.elm, oldStartVnode.elm)
         oldEndVnode = oldCh[--oldEndIdx]
         newStartVnode = newCh[++newStartIdx]
       } else {
+        // 如果上述情况，都没有找到相同的节点，这个时候需要把旧列表里面没有处理的节点根据key值做个映射
         if (isUndef(oldKeyToIdx)) oldKeyToIdx = createKeyToOldIdx(oldCh, oldStartIdx, oldEndIdx)
-        idxInOld = isDef(newStartVnode.key)
-          ? oldKeyToIdx[newStartVnode.key]
-          : findIdxInOld(newStartVnode, oldCh, oldStartIdx, oldEndIdx)
+
+        // 如果新首节点存在key值去映射上去找，如果没有key值就遍历旧列表未处理的节点找
+        idxInOld = isDef(newStartVnode.key) ? oldKeyToIdx[newStartVnode.key] : findIdxInOld(newStartVnode, oldCh, oldStartIdx, oldEndIdx)
+
+        // 如果在旧列表里面没有找到，那么说明新列表的这个节点是新增的，就需要创建新Dom节点
         if (isUndef(idxInOld)) { // New element
           createElm(newStartVnode, insertedVnodeQueue, parentElm, oldStartVnode.elm, false, newCh, newStartIdx)
         } else {
+          // 取出老节点
           vnodeToMove = oldCh[idxInOld]
           if (sameVnode(vnodeToMove, newStartVnode)) {
+            /**
+             * 是同一个节点，需要对比同时把旧列表里面老节点的这个位置清空
+             * 然后移动老节点对应Dom的位置，移动到未处理的Dom节点之前
+             */
             patchVnode(vnodeToMove, newStartVnode, insertedVnodeQueue, newCh, newStartIdx)
             oldCh[idxInOld] = undefined
             canMove && nodeOps.insertBefore(parentElm, vnodeToMove.elm, oldStartVnode.elm)
-          } else {
+          } else { // 不是同一个节点，同样说明新首节点是新增的，需要创建
             // same key but different element. treat as new element
             createElm(newStartVnode, insertedVnodeQueue, parentElm, oldStartVnode.elm, false, newCh, newStartIdx)
           }
         }
+        /**
+         * 在这个映射寻找阶段都是处理新首节点和老节点的情况
+         * 所以处理完以后需要把新首指针向后移动一位，
+         * 同时取出当前指针位置的节点作为新首节点
+         */
         newStartVnode = newCh[++newStartIdx]
       }
     }
+    /**
+     * 当上述过程遍历完成以后，新旧列表的两对指针来到这里有一对先相遇了
+     */
     if (oldStartIdx > oldEndIdx) {
+      /**
+       * 旧列表的指针先相遇了，说明新列表里面的节点剩余了
+       * 没有在旧列表里面找到相同的，这个时候说明新列表剩下的节点，都是这次新增的需要创建并插到真实Dom
+       * 插入Dom的位置是已处理过过得新尾节点之前，这样做的目的是为了保证顺序
+       *
+       */
       refElm = isUndef(newCh[newEndIdx + 1]) ? null : newCh[newEndIdx + 1].elm
       addVnodes(parentElm, refElm, newCh, newStartIdx, newEndIdx, insertedVnodeQueue)
     } else if (newStartIdx > newEndIdx) {
