@@ -572,7 +572,16 @@ export function createPatchFunction (backend) {
     }
   }
 
+  /**
+   * 检验组件是不是用了相同的key
+   * 因为在diff子组件的时候，会用到key做映射，来找出新旧相同的节点
+   * 如果列表中出现了相同的key可能会引起不必要的渲染，浪费性能
+   */
   function checkDuplicateKeys (children) {
+    /**
+     * 使用映射表，缓存已经出现的key,
+     * 如果遇到相同的key报错提示
+     */
     const seenKeys = {}
     for (let i = 0; i < children.length; i++) {
       const vnode = children[i]
@@ -590,6 +599,15 @@ export function createPatchFunction (backend) {
     }
   }
 
+  /**
+   * 遍历列表找出相同的节点，返回指针值
+   * 此方法使用在当映射对比阶段使用key来查找相同节点的没有找到以后
+   * 需要回退到使用遍历的方式顺序查找
+   * @param {*} node 
+   * @param {*} oldCh 
+   * @param {*} start 
+   * @param {*} end 
+   */
   function findIdxInOld (node, oldCh, start, end) {
     for (let i = start; i < end; i++) {
       const c = oldCh[i]
