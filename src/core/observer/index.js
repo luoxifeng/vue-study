@@ -161,12 +161,36 @@ export function defineReactive (
       const value = getter ? getter.call(obj) : val
       if (Dep.target) {
         dep.depend()
+        
+        /**
+         * 下面的代码是专门为动态设置$set函数做的
+         */
         if (childOb) {
           /**
-           * 当调用Vue.prottotype.$set(target, key, val)的时候 
-           * 需要target.__ob__.dep.notify()
+           * 这一步很关键，当模板里面使用了没有建立响应式的数据，只有通过调用$set才能让页面重新渲染，
+           * 原因是这里对对象级别的__ob__(每个响应式的对象上面都有__ob__属性)做了依赖收集 childOb.dep.depend()，
+           * 当调用$set的时候，内部会从我们传入的对象上面取到__ob__，然后调用ob.dep.notify()，引起了页面的重新渲染
            */
           childOb.dep.depend()
+          /**
+           * 这一步也很关键， 如果value值是数组需要把里面的每一项都收集依赖
+           * 如下一种场景
+           * {
+           *  data() {
+           *    return { 
+           *      a: [{ b: 1 }]
+           *    }
+           *  }
+           * }
+           * 如果在模板里面写的
+           * <div>{{a[0].c}}</div>
+           * 使用了c这个没有建立响应式的数组
+           * 当使用了this.$set(this.a[0], 'c', 123)手动设置的时候之所以会重新渲染，
+           * 是因为下面的代码，对this.a这个数组里面的每一项进行了依赖收集
+           * 所以当手动设置的时候，$set函数内部会渠道this.a[0].__ob__
+           * 然后调用__ob__.dep.notify(),因此重新渲染了
+           * 如果没有下面的处理，就不会得到想要的效果
+           */
           if (Array.isArray(value)) {
             dependArray(value)
           }

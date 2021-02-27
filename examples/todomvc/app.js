@@ -69,11 +69,12 @@ var app = new Vue({
   data: {
     a: {
       b: {
-        k: [],
+        k: [ ],
         c: {
           d: 11
         }
-      }
+      },
+      c: [{}]
     },
     d: 1258,
     kk: 'asd',
