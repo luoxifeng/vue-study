@@ -277,6 +277,10 @@ function checkComponents (options: Object) {
   }
 }
 
+/**
+ * 验证组件的名称是否合法
+ * @param {*} name 
+ */
 export function validateComponentName (name: string) {
   // 合法的html5标签
   if (!new RegExp(`^[a-zA-Z][\\-\\.0-9_${unicodeRegExp.source}]*$`).test(name)) {
@@ -300,12 +304,24 @@ export function validateComponentName (name: string) {
 /**
  * Ensure all props option syntax are normalized into the
  * Object-based format.
+ * 规范化props的配置，props只能配置为字符串数组或者对象，
+ * 其中对象形式，value可以是类型或者{ type: XXX }这种对象形式，
+ * 无论是数组或者额对象形式最终都会处理成对象的形式， 如下
+ * {
+ *    foo: {
+ *      type: XXX,
+ *      defalut: xxx,
+ *      validator：() => boolean
+ *    }
+ * }
+ * 其中type是必须的，默认为null
  */
 function normalizeProps (options: Object, vm: ?Component) {
   const props = options.props
   if (!props) return
   const res = {}
   let i, val, name
+  
   if (Array.isArray(props)) {
     i = props.length
     while (i--) {
