@@ -321,7 +321,19 @@ function normalizeProps (options: Object, vm: ?Component) {
   if (!props) return
   const res = {}
   let i, val, name
-  
+  /**
+   * 如果是数组，遍历数组
+   * 是字符串就camelize转换以后设置默认设置{ type: null }
+   * 如果不是字符串需要报错提示，数组形式只能配置字符串
+   * 例如：
+   * ['foo', 'moo', 'xx-yy']
+   * 会被处理成
+   * {
+   *    foo: { type: null },
+   *    moo: { type: null },
+   *    xxYy: { type: null },
+   * }
+   */
   if (Array.isArray(props)) {
     i = props.length
     while (i--) {
@@ -334,6 +346,24 @@ function normalizeProps (options: Object, vm: ?Component) {
       }
     }
   } else if (isPlainObject(props)) {
+    /**
+     * 如果是对象，遍历对象key值
+     * 先取出value值，然后对key值进行驼峰化，
+     * 判断value值如果是普通对象就使用这个，
+     * 如果不是普通对象说明是构造函数就包裹一下变成 { type: XXX }
+     * 例如：
+     * {
+     *   foo: Array,
+     *   moo: { type: Object },
+     *   'xx-yy': { type: Boolean }
+     * }
+     * 会被处理成
+     * {
+     *    foo: { type: Array },
+     *    moo: { type: Object },
+     *    xxYy: { type: Boolean }
+     * }
+     */
     for (const key in props) {
       val = props[key]
       name = camelize(key)
