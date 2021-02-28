@@ -201,6 +201,9 @@ export function defineReactive (
     set: function reactiveSetter (newVal) {
 
       const value = getter ? getter.call(obj) : val
+      /**
+       * 只有在新值和旧值不一样的情况下才会通知
+       */
       /* eslint-disable no-self-compare */
       if (newVal === value || (newVal !== newVal && value !== value)) {
         return
@@ -214,8 +217,13 @@ export function defineReactive (
       if (setter) {
         setter.call(obj, newVal)
       } else {
+        // 改变闭包里面原来的值
         val = newVal
       }
+      /**
+       * 重新设置的时候，值可能是非响应式的
+       * 需要重新建立响应式
+       */
       childOb = !shallow && observe(newVal)
       dep.notify()
     }
@@ -231,7 +239,9 @@ export function set (target: Array<any> | Object, key: any, val: any): any {
   if (process.env.NODE_ENV !== 'production' &&
     (isUndef(target) || isPrimitive(target))
   ) {
-    warn(`Cannot set reactive property on undefined, null, or primitive value: ${(target: any)}`)
+    // warn(`Cannot set reactive property on undefined, null, or primitive value: ${(target: any)}`)
+    warn(`Cannot set reactive property on undefined, null, or primitive value: ${target}`)
+
   }
   if (Array.isArray(target) && isValidArrayIndex(key)) {
     target.length = Math.max(target.length, key)
@@ -242,7 +252,8 @@ export function set (target: Array<any> | Object, key: any, val: any): any {
     target[key] = val
     return val
   }
-  const ob = (target: any).__ob__
+  // const ob = (target: any).__ob__
+  const ob = target.__ob__
   if (target._isVue || (ob && ob.vmCount)) {
     process.env.NODE_ENV !== 'production' && warn(
       'Avoid adding reactive properties to a Vue instance or its root $data ' +
