@@ -235,6 +235,7 @@ LIFECYCLE_HOOKS.forEach(hook => {
  * When a vm is present (instance creation), we need to do
  * a three-way merge between constructor options, instance
  * options and parent options.
+ * 合并conponent,filter等
  */
 function mergeAssets (
   parentVal: ?Object,
@@ -244,6 +245,7 @@ function mergeAssets (
 ): Object {
   const res = Object.create(parentVal || null)
   if (childVal) {
+    // 开发环境下，如果遇到不存在的asset类型会报错提示
     process.env.NODE_ENV !== 'production' && assertObjectType(key, childVal, vm)
     return extend(res, childVal)
   } else {
@@ -251,15 +253,19 @@ function mergeAssets (
   }
 }
 
+/**
+ * componets, filter等的合并策略是一样的extend 
+ * 就是把来源数据上的复制到当前目标对象上一份
+ */
 ASSET_TYPES.forEach(function (type) {
   strats[type + 's'] = mergeAssets
 })
 
 /**
  * Watchers.
- *
  * Watchers hashes should not overwrite one
  * another, so we merge them as arrays.
+ * watcher合并策略
  */
 strats.watch = function (
   parentVal: ?Object,
@@ -531,6 +537,7 @@ function assertObjectType (name: string, value: any, vm: ?Component) {
 /**
  * Merge two option objects into a new one.
  * Core utility used in both instantiation and inheritance.
+ * 合并配置项
  */
 export function mergeOptions (
   parent: Object,
