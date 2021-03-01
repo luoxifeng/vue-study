@@ -273,6 +273,9 @@ strats.watch = function (
   vm?: Component,
   key: string
 ): ?Object {
+  /**
+   * 跳过原生的watch, Firefox's 上的问题
+   */
   // work around Firefox's Object.prototype.watch...
   if (parentVal === nativeWatch) parentVal = undefined
   if (childVal === nativeWatch) childVal = undefined
@@ -299,6 +302,9 @@ strats.watch = function (
 
 /**
  * Other object hashes.
+ * props，methods， computed, 合并策略是一样的
+ * 如果来源没有，就直接使用当前的，
+ * 如果来源有直接extend
  */
 strats.props =
 strats.methods =
@@ -322,6 +328,7 @@ strats.provide = mergeDataOrFn
 
 /**
  * Default strategy.
+ * 默认的合并策略
  */
 const defaultStrat = function (parentVal: any, childVal: any): any {
   return childVal === undefined
@@ -508,6 +515,7 @@ function normalizeInject (options: Object, vm: ?Component) {
 
 /**
  * Normalize raw function directives into object format.
+ * 指令规范化，如果直接配置的为函数，则转换成 { bind: def, update: def } 这种对象形式
  */
 function normalizeDirectives (options: Object) {
   const dirs = options.directives
