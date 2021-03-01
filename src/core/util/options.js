@@ -33,13 +33,42 @@ const strats = config.optionMergeStrategies
 
 /**
  * Options with restrictions
+ * 开发环境下，el， propsData的合并策略
+ * 会做一个容错，自定义组件不允许使用el，propsData,
+ * 如果使用了开发环境下会提示报警，然后调用defaultStrat
+ * 如果是生产环境我们没有配置策略合并函数
+ * 下面的mergeField函数里面第一行defaultStrat就会起作用
+ * const strat = strats[key] || defaultStrat
+ * 当一个配置选项不需要特殊处理的时候就是默认的合并策略defaultStrat
  */
 if (process.env.NODE_ENV !== 'production') {
-  /**
-   * 开发环境下，el， propsData的合并策略
-   * 会做一个容错，内部调用的是defaultStrat
-   */
   strats.el = strats.propsData = function (parent, child, vm, key) {
+    /**
+     * vm不存在说明处理的是子组件，子组件里面使用el， propsData会报警提示
+     * 为什么vm不存在就是子组件的，因为当前的策略是在c调用的
+     * vm就是mergeOptions的第三个参数，那么什么时候mergeOptions会不穿第三个参数呢
+     * 我们知道当调用this._init的时候里面有这样的代码
+     * if (options && options._isComponent) { // 自定义组件实例
+     *    initInternalComponent(vm, options)
+     * } else { // vue实例
+     *    vm.$options = mergeOptions(
+     *      resolveConstructorOptions(vm.constructor),
+     *      options || {},
+     *      vm
+     *    )
+     * }
+     * vm就是当前实例，虽然子组件实例化也会走this._init
+     * 但是从上面代码里面看出，当时组件的时候走的 initInternalComponent(vm, options)
+     * 这说明还有其他的地方调用mergeOptions，且没有传第三个参数，
+     * 其实就是Vue.extend里面，有这样的代码
+     * Sub.options = mergeOptions(
+     *    Super.options,
+     *    extendOptions
+     * )
+     * 这里是没有传第三个参数，Vue.extend函数就是处理子组件的构造器的
+     * 所以我们知道当没有vm的时候是调用了Vue.extend在处理子组件
+     * 因此我们根据vm的不存在来认为是子组件
+     */
     if (!vm) {
       warn(
         `option "${key}" can only be used during instance ` +
@@ -52,7 +81,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 /**
  * Helper that recursively merges two data objects together.
- * 合并data配置，
+ * 合并data配置，这里才是合并data数据的流程之前的流程是为了得到两个对象在这里进行合并
  * 1. 目标对象不存在的属性，使用来源对象来设置
  * 2. 目标对象存在的属性
  *  2.1 如果属性值是简单类型，不用设置
@@ -101,6 +130,9 @@ function mergeData (to: Object, from: ?Object): Object {
 
 /**
  * Data
+ * ! 重点：进过这里的处理以后options.data能始终保证是一个函数
+ * ! 这个函数对原始的data进行了一层包装，里面做了合并操作
+ * ! 函数在初始化的时候才真正调用
  */
 export function mergeDataOrFn (
   parentVal: any,
@@ -108,11 +140,28 @@ export function mergeDataOrFn (
   vm?: Component
 ): ?Function {
   /**
-   *  Vue.extend merge
+   * 处理子组件
    */
-  if (!vm) {
+  if (!vm) { 
     // in a Vue.extend merge, both should be functions
+    /**
+     * 使用 Vue.extend 处理选项，childVal 和 parentVal 都应该是函数
+     * 下面的两个判断只有一个不存在就返回
+     */
     if (!childVal) {
+      /**
+       * parentVal可能不为空
+       * Vue.extend可以多层调用，parentVal不一定就是Vue.options
+       * 比如
+       *  const Parent = Vue.extend({ 
+       *    data() {
+       *      return { foo: 123 } 
+       *    }
+       *  })
+       *  const Child = Parent.extend({})
+       * 上述例子中Child是由Parent.extend产生的，
+       * 这种情况下childVal不存在，而parentVal有值
+       */
       return parentVal
     }
     if (!parentVal) {
@@ -123,7 +172,14 @@ export function mergeDataOrFn (
     // merged result of both functions... no need to
     // check if parentVal is a function here because
     // it has to be a function to pass previous merges.
+    /**
+     * 从上面的判断知道，来到这里childVal，parentVal都有值
+     * 这里的返回结果是mergedDataFn函数，这个函数其实就是option.data
+     * 这就保证了data始终是一个函数
+     * !重点：初始化的时候才调用进行合并
+     */
     return function mergedDataFn () {
+      // 
       return mergeData(
         typeof childVal === 'function' ? childVal.call(this, this) : childVal,
         typeof parentVal === 'function' ? parentVal.call(this, this) : parentVal
@@ -132,6 +188,14 @@ export function mergeDataOrFn (
   } else {
     /**
      * 实例上的合并
+     * 也就是说我们通过下面这种方式创建
+     * new Vue({
+     *  el: '#app',
+     *  data: { foo: 123 }
+     * })
+     * 进过这里处理以后data就是mergedInstanceDataFn
+     * 始终保证是一个函数
+     * !重点：初始化的时候才调用进行合并
      */
     return function mergedInstanceDataFn () {
       // instance merge
@@ -167,7 +231,8 @@ strats.data = function (
 ): ?Function {
   if (!vm) {
     /**
-     * data必须是一个函数
+     * 我们从strats.el那里知道，vm不存在是子组件
+     * vue规定子组件data必须是一个函数
      */
     if (childVal && typeof childVal !== 'function') {
       process.env.NODE_ENV !== 'production' && warn(
@@ -182,6 +247,7 @@ strats.data = function (
     return mergeDataOrFn(parentVal, childVal)
   }
 
+  // 传了vm，说明是正常new Vue产生的实例
   return mergeDataOrFn(parentVal, childVal, vm)
 }
 
@@ -328,7 +394,10 @@ strats.provide = mergeDataOrFn
 
 /**
  * Default strategy.
- * 默认的合并策略
+ * 默认的合并策略，逻辑很简单
+ * 如果子选项存在（不是undefined）就使用子选项的配置，
+ * 否则使用父选项
+ * 
  */
 const defaultStrat = function (parentVal: any, childVal: any): any {
   return childVal === undefined
@@ -453,8 +522,6 @@ function normalizeProps (options: Object, vm: ?Component) {
 /**
  * Normalize all injections into Object-based format
  * 规范化inject到对象形式
- * 
- * 
  */
 function normalizeInject (options: Object, vm: ?Component) {
   const inject = options.inject
@@ -546,7 +613,7 @@ function assertObjectType (name: string, value: any, vm: ?Component) {
  * Merge two option objects into a new one.
  * Core utility used in both instantiation and inheritance.
  * 会使用在实例额合并以及继承
- * 合并配置项
+ * ! 先进行规范化在进行合并配置项
  */
 export function mergeOptions (
   parent: Object,
@@ -558,10 +625,22 @@ export function mergeOptions (
     checkComponents(child)
   }
 
+  /**
+   * ! 规范化
+   * 使用 Vue.extend,child为子类的构造器，
+   * 构造器上面有静态属性options,
+   * 所以 child = child.options
+   */
   if (typeof child === 'function') {
     child = child.options
   }
 
+  /**
+   * 规范化props,inject，directives
+   * 规范化的目的是在外部提供灵活的多种使用方式，
+   * 在这里进行处理以后，会得到统一格式的配置
+   * 方便后面的使用，以避免多种使用方式带来的判断
+   */
   normalizeProps(child, vm)
   normalizeInject(child, vm)
   normalizeDirectives(child)
@@ -570,11 +649,16 @@ export function mergeOptions (
   // but only if it is a raw options object that isn't
   // the result of another mergeOptions call.
   // Only merged options has the _base property.
+  /**
+   * 处理子组件的extends，mixins，但是不能是已经调用过mergeOptions返回的配置
+   * 如果子组件存在这些属性把这些属性和parent个配置尽心merge
+   * 得到新的配置对象作为parent
+   */
   if (!child._base) {
     if (child.extends) {
       parent = mergeOptions(parent, child.extends, vm)
     }
-    if (child.mixins) {
+    if (child.mixins) { // 因为mixins是数组,所以进行遍历
       for (let i = 0, l = child.mixins.length; i < l; i++) {
         parent = mergeOptions(parent, child.mixins[i], vm)
       }
@@ -582,19 +666,30 @@ export function mergeOptions (
   }
 
   /**
+   * ! 合并
    * 合并策略的执行
    * 也是策略模式的执行器
    */
   const options = {}
   let key
+  // 遍历parent的相应配置merge到options
   for (key in parent) {
     mergeField(key)
   }
+
+  // 遍历child的相应配置merge到options
   for (key in child) {
+    /**
+     * 如果可已经在parent存在就不进行合并操作了
+     * 因为上一步已经做过了，避免重复合并
+     * 其实这一步是在合并那些在parent不存在的配置
+     * 也就是child上比parent多的那部分配置
+     */
     if (!hasOwn(parent, key)) {
       mergeField(key)
     }
   }
+  // 策略的执行过程
   function mergeField (key) {
     const strat = strats[key] || defaultStrat
     options[key] = strat(parent[key], child[key], vm, key)
