@@ -25,6 +25,9 @@ import {
  * Option overwriting strategies are functions that handle
  * how to merge a parent option value and a child option
  * value into the final value.
+ * 合并配置vue采用了策略模式，每种配置都有自己的合并策略
+ * 这里是默认的策略，刚开始是空的也就是没有任何策略
+ * 接下里会配置各种策略来合并相应的配置项
  */
 const strats = config.optionMergeStrategies
 
@@ -32,6 +35,10 @@ const strats = config.optionMergeStrategies
  * Options with restrictions
  */
 if (process.env.NODE_ENV !== 'production') {
+  /**
+   * 开发环境下，el， propsData的合并策略
+   * 会做一个容错，内部调用的是defaultStrat
+   */
   strats.el = strats.propsData = function (parent, child, vm, key) {
     if (!vm) {
       warn(
@@ -45,31 +52,50 @@ if (process.env.NODE_ENV !== 'production') {
 
 /**
  * Helper that recursively merges two data objects together.
+ * 合并data配置，
+ * 1. 目标对象不存在的属性，使用来源对象来设置
+ * 2. 目标对象存在的属性
+ *  2.1 如果属性值是简单类型，不用设置
+ *  2.2 属性值是对象对象且来源值也是对象类型且不相等，递归上述过程
  */
 function mergeData (to: Object, from: ?Object): Object {
   if (!from) return to
   let key, toVal, fromVal
 
-  const keys = hasSymbol
-    ? Reflect.ownKeys(from)
-    : Object.keys(from)
+  // 取来源对象上所有的key值
+  const keys = hasSymbol ? Reflect.ownKeys(from) : Object.keys(from)
 
+  /**
+   * 遍历来源的key值，需要把来源上所有的属性都合并到目标对象上
+   */
   for (let i = 0; i < keys.length; i++) {
     key = keys[i]
     // in case the object is already observed...
+    /**
+     * 如果对象已经是响应式的会跳过
+     */
     if (key === '__ob__') continue
     toVal = to[key]
     fromVal = from[key]
     if (!hasOwn(to, key)) {
+      /**
+       * 如果目标对象上本身不存在此属性
+       * 就会使用来源对象上的值来对目标对象进行设置
+       */
       set(to, key, fromVal)
     } else if (
       toVal !== fromVal &&
       isPlainObject(toVal) &&
       isPlainObject(fromVal)
     ) {
+      /**
+       * 如果来源和目标值不相等且都是对象对象
+       * 需要递归调用进行深层此合并
+       */
       mergeData(toVal, fromVal)
     }
   }
+  // 最终返回目标值
   return to
 }
 
@@ -81,6 +107,9 @@ export function mergeDataOrFn (
   childVal: any,
   vm?: Component
 ): ?Function {
+  /**
+   *  Vue.extend merge
+   */
   if (!vm) {
     // in a Vue.extend merge, both should be functions
     if (!childVal) {
@@ -101,6 +130,9 @@ export function mergeDataOrFn (
       )
     }
   } else {
+    /**
+     * 实例上的合并
+     */
     return function mergedInstanceDataFn () {
       // instance merge
       const instanceData = typeof childVal === 'function'
@@ -109,6 +141,10 @@ export function mergeDataOrFn (
       const defaultData = typeof parentVal === 'function'
         ? parentVal.call(vm, vm)
         : parentVal
+      /**
+       * 当前组件含有data,并且返回值存在进行合并
+       * 否则返回来源数据
+       */
       if (instanceData) {
         return mergeData(instanceData, defaultData)
       } else {
@@ -118,12 +154,21 @@ export function mergeDataOrFn (
   }
 }
 
+/**
+ * data的合并策略
+ * @param {*} parentVal 
+ * @param {*} childVal 
+ * @param {*} vm 
+ */
 strats.data = function (
   parentVal: any,
   childVal: any,
   vm?: Component
 ): ?Function {
   if (!vm) {
+    /**
+     * data必须是一个函数
+     */
     if (childVal && typeof childVal !== 'function') {
       process.env.NODE_ENV !== 'production' && warn(
         'The "data" option should be a function ' +
@@ -142,6 +187,10 @@ strats.data = function (
 
 /**
  * Hooks and props are merged as arrays.
+ * 生命周期的合并的合并策略
+ * 合并过程中回会生命周期进行断言，如果是数组就进行concat,否则转换成数组
+ * 里面还有容错回退机制，如果当前实例没有生命周期，就沿用来源的
+ * 最终是合并成一个函数数组，然后在进行一步去重操作
  */
 function mergeHook (
   parentVal: ?Array<Function>,
@@ -159,6 +208,10 @@ function mergeHook (
     : res
 }
 
+/**
+ * 对生命周期进行去重
+ * @param {*} hooks 
+ */
 function dedupeHooks (hooks) {
   const res = []
   for (let i = 0; i < hooks.length; i++) {
@@ -169,6 +222,9 @@ function dedupeHooks (hooks) {
   return res
 }
 
+/**
+ * 各个生命周期的合并策略，都是一样的
+ */
 LIFECYCLE_HOOKS.forEach(hook => {
   strats[hook] = mergeHook
 })
