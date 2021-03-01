@@ -537,6 +537,7 @@ function assertObjectType (name: string, value: any, vm: ?Component) {
 /**
  * Merge two option objects into a new one.
  * Core utility used in both instantiation and inheritance.
+ * 会使用在实例额合并以及继承
  * 合并配置项
  */
 export function mergeOptions (
@@ -572,6 +573,10 @@ export function mergeOptions (
     }
   }
 
+  /**
+   * 合并策略的执行
+   * 也是策略模式的执行器
+   */
   const options = {}
   let key
   for (key in parent) {
@@ -586,6 +591,7 @@ export function mergeOptions (
     const strat = strats[key] || defaultStrat
     options[key] = strat(parent[key], child[key], vm, key)
   }
+
   return options
 }
 
