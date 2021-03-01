@@ -362,6 +362,21 @@ export function deactivateChildComponent (vm: Component, direct?: boolean) {
   }
 }
 
+/**
+ * 这里先置空Dep.target
+ * 因为在子组件出事后过程中，在renderWtach还没有准备好的时候
+ * 如果子组件使用了父组件传给子组件的props, 会多收集一次父组件的renderWatch
+ * 因为这个时候Dep.target还是父组件的renderWatch依赖
+ * 这样就会造成收集了多次依赖，因为在父组件使用传给子组件props的时候
+ * 已经收集了父组件的renderWatch，当去改变props上面数据的时候
+ * 会引起父组件多余的渲染，所以在使用生命周期的时候需要先置空Dep.target
+ * 这里还有一个连带的现象就是当不是第一次更改props数据的时候就会表现正常
+ * 是因为第一后修改以后重新渲染，会重新收集依赖，依赖收集结束会调用watch.cleanupDeps
+ * 这样父组件renderWatch.deps就不会有只有的那个dep,
+ * dep也从dep.subs里删除了父组件的renderWatch
+ * 所以当数据改变以后dep.notify就通知不到父组件的renderWatch
+ * 就表现正常了
+ */
 export function callHook (vm: Component, hook: string) {
   // #7573 disable dep collection when invoking lifecycle hooks
   pushTarget()

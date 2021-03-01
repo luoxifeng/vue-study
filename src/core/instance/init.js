@@ -29,13 +29,14 @@ export function initMixin (Vue: Class<Component>) {
     // a flag to avoid this being observed
     vm._isVue = true
     // merge options
+    // 自定义组件
     if (options && options._isComponent) {
-      
       // optimize internal component instantiation
       // since dynamic options merging is pretty slow, and none of the
       // internal component options needs special treatment.
       initInternalComponent(vm, options)
     } else {
+      // vue 实例合并配置， new Vue({ ... }) 形式创建建
       vm.$options = mergeOptions(
         resolveConstructorOptions(vm.constructor),
         options || {},
@@ -44,6 +45,7 @@ export function initMixin (Vue: Class<Component>) {
     }
     /* istanbul ignore else */
     if (process.env.NODE_ENV !== 'production') {
+      // 非生产环境下使用代理，可以对访问或者设置做一些拦截
       initProxy(vm)
     } else {
       vm._renderProxy = vm
@@ -65,7 +67,7 @@ export function initMixin (Vue: Class<Component>) {
       mark(endTag)
       measure(`vue ${vm._name} init`, startTag, endTag)
     }
-
+    // 挂载
     if (vm.$options.el) {
       vm.$mount(vm.$options.el)
     }
@@ -73,9 +75,9 @@ export function initMixin (Vue: Class<Component>) {
 }
 
 /**
- * 
  * @param {*} vm 
- * @param {*} options 
+ * @param {*} options
+ * 自定义组件的配置初始化操作
  */
 export function initInternalComponent (vm: Component, options: InternalComponentOptions) {
   const opts = vm.$options = Object.create(vm.constructor.options)
@@ -90,6 +92,7 @@ export function initInternalComponent (vm: Component, options: InternalComponent
   opts._renderChildren = vnodeComponentOptions.children
   opts._componentTag = vnodeComponentOptions.tag
 
+  // 设置渲染函数
   if (options.render) {
     opts.render = options.render
     opts.staticRenderFns = options.staticRenderFns
