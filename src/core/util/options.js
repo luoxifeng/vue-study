@@ -459,6 +459,9 @@ function normalizeDirectives (options: Object) {
   }
 }
 
+/**
+ * 断言对象类型，如果不是对象类型，就报错提示
+ */
 function assertObjectType (name: string, value: any, vm: ?Component) {
   if (!isPlainObject(value)) {
     warn(
@@ -527,6 +530,7 @@ export function mergeOptions (
  * Resolve an asset.
  * This function is used because child instances need access
  * to assets defined in its ancestor chain.
+ * 取某种类型的属性值
  */
 export function resolveAsset (
   options: Object,
@@ -538,6 +542,11 @@ export function resolveAsset (
   if (typeof id !== 'string') {
     return
   }
+  /**
+   * 会根据属性名的 原始名称，camelize化名称，capitalize化的名称
+   * 在本身上寻找值，如果找不到就回退到原型链上寻找，如果还是找不到就报错提示
+   * 从这里可以看出vue对于配置的处理还是很灵活的兼容了多种写法
+   */
   const assets = options[type]
   // check local registration variations first
   if (hasOwn(assets, id)) return assets[id]
