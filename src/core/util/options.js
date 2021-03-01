@@ -383,16 +383,48 @@ function normalizeProps (options: Object, vm: ?Component) {
 
 /**
  * Normalize all injections into Object-based format
+ * 规范化inject到对象形式
+ * 
+ * 
  */
 function normalizeInject (options: Object, vm: ?Component) {
   const inject = options.inject
   if (!inject) return
   const normalized = options.inject = {}
+  /**
+   * 如果是数组形式，比如 ['foo', 'moo']
+   * 最终会被处理成
+   * [
+   *  { from: 'foo' }，
+   *  { from: 'moo' }
+   * ]
+   */
   if (Array.isArray(inject)) {
     for (let i = 0; i < inject.length; i++) {
       normalized[inject[i]] = { from: inject[i] }
     }
   } else if (isPlainObject(inject)) {
+    /**
+     * 如果是对象形式
+     * {
+     *   foo: 'foo',
+     *   moo: {
+     *    noo: abc
+     *   }
+     * }
+     * 最终会被处理成
+     * {
+     *    foo: { from: 'foo' },
+     *    moo: { from: 'moo', noo: abc }
+     * }
+     * 
+     * 这里对象配置的形式可能会存在 default 配置比如：
+     * {
+     *    moo: { from: 'moo', default: abc }
+     * }
+     * 当在初始化的时候如果没有从祖先组件找到相应的值
+     * 就会使用默认值，
+     */
     for (const key in inject) {
       const val = inject[key]
       normalized[key] = isPlainObject(val)
@@ -400,6 +432,10 @@ function normalizeInject (options: Object, vm: ?Component) {
         : { from: val }
     }
   } else if (process.env.NODE_ENV !== 'production') {
+    /**
+     * vue规定inject只能是字符串数组，或者对象形式
+     * 其他类型会走到这里，在开发环境会报错提示
+     */
     warn(
       `Invalid value for option "inject": expected an Array or an Object, ` +
       `but got ${toRawType(inject)}.`,
