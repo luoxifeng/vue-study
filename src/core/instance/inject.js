@@ -4,6 +4,12 @@ import { hasOwn } from 'shared/util'
 import { warn, hasSymbol } from '../util/index'
 import { defineReactive, toggleObserving } from '../observer/index'
 
+/**
+ * @param {*} vm
+ * 初始化provide
+ * 当存在provide选项的时候，
+ * 如果是函数就调用函数
+ */
 export function initProvide (vm: Component) {
   const provide = vm.$options.provide
   if (provide) {
