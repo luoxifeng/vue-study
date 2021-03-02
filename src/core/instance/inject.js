@@ -33,9 +33,14 @@ export function initInjections (vm: Component) {
    */
   const result = resolveInject(vm.$options.inject, vm)
   if (result) {
-    toggleObserving(false) // 关闭响应式
     /**
-     * 遍历inject所有属性，进行浅层响应式
+     * 关闭响应式处理，后面又恢复了
+     * vue官方文档特意说明了这是有意为之，
+     * 不过如果父组件提供的是响应式数据，子组件取到的值也还是响应式的
+     */
+    toggleObserving(false) // 
+    /**
+     * 遍历inject所有属性，绑定到当前实例上
      */
     Object.keys(result).forEach(key => {
       /* istanbul ignore else */
@@ -102,6 +107,13 @@ export function resolveInject (inject: any, vm: Component): ?Object {
        * 一直找到顶层，无论找不找到都退出循环
        */
       const provideKey = inject[key].from
+
+      /**
+       * vm为当前实例，不过不用担心，会取到当前实例的_provided
+       * 因为在this._init里面initInject是在initPrivide之前调用的
+       * 当initInject调用的时候，当前实例上是没有_provided的
+       * 这样保证了provide提供的数据只有子组件可以使用
+       */
       let source = vm
       while (source) {
         if (source._provided && hasOwn(source._provided, provideKey)) {
