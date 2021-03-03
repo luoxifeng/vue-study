@@ -211,8 +211,25 @@ export function eventsMixin (Vue: Class<Component>) {
     return vm
   }
 
+  /**
+   * 
+   * @param {*} event 
+   * 触发事件
+   */
   Vue.prototype.$emit = function (event: string): Component {
     const vm: Component = this
+    /**
+     * Vue在这里做了智能提示，如果我们传入的是非小写的事件名但是却找到了小写的事件名称,
+     * 比如:
+     * 在Dom模板中<xxx v-on:fooHandler='foo' /> 我们绑定了fooHandler
+     * 触发的时候传的也是fooHandler, vue猜测可能是使用fooHandler这种驼峰命名绑定的
+     * 但是vue实际找到的却是foohandler绑定的，就会提示在 `Dom模板` 中html attributes是大小写不敏感的，
+     * 建议（在Dom模板中）不要使用驼峰命名绑定，应该使用foo-handler来代替fooHandler
+     * 
+     * Dom模板：
+     * 指的是我们传入了一个真实的Dom元素作为模板，不是vue单文件的<template>字符串模板也不是编译时的模板
+     * 因为真实的dom属性大小写不明感，即使我们书写的是fooHandler，获取到的却是foohandler，可能会引发问题
+     */
     if (process.env.NODE_ENV !== 'production') {
       const lowerCaseEvent = event.toLowerCase()
       if (lowerCaseEvent !== event && vm._events[lowerCaseEvent]) {
