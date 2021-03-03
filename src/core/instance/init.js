@@ -52,13 +52,29 @@ export function initMixin (Vue: Class<Component>) {
     }
     // expose real self
     vm._self = vm
+
+    // 生命周期初始化
     initLifecycle(vm)
+
+    // 事件
     initEvents(vm)
+
+    // render
     initRender(vm)
+
+    // 准备数据之前
     callHook(vm, 'beforeCreate')
+
+    // inject
     initInjections(vm) // resolve injections before data/props
+
+    // props， data, watch， methods, computed
     initState(vm)
+    
+    // provide 是在inject之后的
     initProvide(vm) // resolve provide after data/props
+
+    // 数据方法等已经准备完毕
     callHook(vm, 'created')
 
     /* istanbul ignore if */
@@ -67,6 +83,7 @@ export function initMixin (Vue: Class<Component>) {
       mark(endTag)
       measure(`vue ${vm._name} init`, startTag, endTag)
     }
+    
     // 挂载
     if (vm.$options.el) {
       vm.$mount(vm.$options.el)
