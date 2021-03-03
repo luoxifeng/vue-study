@@ -242,12 +242,24 @@ export function eventsMixin (Vue: Class<Component>) {
         )
       }
     }
+    
+    /**
+     * 找到绑定的事件句柄遍历的调用
+     */
     let cbs = vm._events[event]
     if (cbs) {
       cbs = cbs.length > 1 ? toArray(cbs) : cbs
       const args = toArray(arguments, 1)
       const info = `event handler for "${event}"`
       for (let i = 0, l = cbs.length; i < l; i++) {
+        /**
+         * 对调用的函数做一层包装，为了捕获可能的出错，然后提示
+         * vue帮我们绑定的事件其实已经做了一层包装，
+         * 但是我们可能会手动的调用this.$on('xxx', yyyy)
+         * 这种情况下我们一般不会对yyy做包装，如果在emit阶段出错
+         * 会影响同类事件其他的函数执行，所以vue在emit的时候做了包装
+         * 以保证出错了提示错误信息，同事包装其他的事件句柄正常执行
+         */
         invokeWithErrorHandling(cbs[i], vm, args, vm, info)
       }
     }
