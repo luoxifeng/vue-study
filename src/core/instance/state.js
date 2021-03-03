@@ -35,6 +35,13 @@ const sharedPropertyDefinition = {
   set: noop
 }
 
+/**
+ * 
+ * @param {*} target 
+ * @param {*} sourceKey 
+ * @param {*} key 
+ * 代理数据的访问
+ */
 export function proxy (target: Object, sourceKey: string, key: string) {
   sharedPropertyDefinition.get = function proxyGetter () {
     return this[sourceKey][key]
@@ -42,9 +49,18 @@ export function proxy (target: Object, sourceKey: string, key: string) {
   sharedPropertyDefinition.set = function proxySetter (val) {
     this[sourceKey][key] = val
   }
+  /**
+   * 把对数据sourceKey上的数据访问，代理到当前实例上
+   * vue会把_data，_props上的数据代理到当前对象上
+   * 已达到属性都可以使用当前实例访问到，提供统一的访问方式
+   */
   Object.defineProperty(target, key, sharedPropertyDefinition)
 }
 
+/**
+ * @param {*} vm 
+ * 初始化状态
+ */
 export function initState (vm: Component) {
   vm._watchers = []
   const opts = vm.$options

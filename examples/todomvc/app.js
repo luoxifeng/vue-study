@@ -7,11 +7,17 @@ var STORAGE_KEY = 'todos-vuejs-2.0'
 // Vue.prototype.$on('hook:beforeMount', () => {
 //   alert()
 // })
-var cfg = {
+var mytest = {
   model: {
     event: 'inputs'
   },
   props: ['hh', 'd'],
+  mixins: [{
+    props: ['foo'],
+    data() {
+      return {}
+    },
+  }],
   data() {
     // debugger
     return {
@@ -43,29 +49,35 @@ var cfg = {
       <h3>{{ d }}</h3>
       <slot name="asc" />
       <slot name="asd" v-bind="k" kk="123"/>
-      <div><sss/></div>
     </div>
   `
 }
-var com = Vue.component('mytest', cfg)
+// var com = Vue.component('mytest', mytest)
 
-Vue.component('ytest2', cfg)
+// Vue.component('mytest2', mytest)
 
-Vue.component('sss', {
-  template: `
-  <div class="blog" >
-  </div>
-`,
-beforeMount() {
-  console.warn('sss sss beforeMount')
-},
-mounted() {
-  console.warn('sss sss mounted')
-},
+// Vue.component('sss', {
+//   template: `
+//     <div class="blog" >
+//     </div>
+//   `,
+//   beforeMount() {
+//     console.warn('sss sss beforeMount')
+//   },
+//   mounted() {
+//     console.warn('sss sss mounted')
+//   },
 
-})
+// })
 
 var app = new Vue({
+  mixins: [{
+    props: ['foo'],
+    data() {
+      return {}
+    },
+  }],
+  props: ['ddd'],
   data: {
     a: {
       b: {
@@ -85,6 +97,9 @@ var app = new Vue({
     cls: {
       'teststatic': true
     }
+  },
+  components: {
+    mytest
   },
   // watch todos change for localStorage persistence
   // watch: {
@@ -122,14 +137,6 @@ var app = new Vue({
   mounted() {
     console.warn('root component mounted')
   },
-  mixins: [
-    {
-      created() {
-
-      }
-    }
-  ],
-
   filters: {
     pluralize: function (n) {
       return n === 1 ? 'item' : 'items'

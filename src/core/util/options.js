@@ -651,9 +651,11 @@ export function mergeOptions (
   // Only merged options has the _base property.
   /**
    * 处理子组件的extends，mixins，但是不能是已经调用过mergeOptions返回的配置
+   * 如果是被mergeOptions处理过的配置上面含有_base
    * 如果子组件存在这些属性把这些属性和parent个配置尽心merge
    * 得到新的配置对象作为parent
    */
+  debugger
   if (!child._base) {
     if (child.extends) {
       parent = mergeOptions(parent, child.extends, vm)
