@@ -152,3 +152,5 @@ function resolveModifiedOptions (Ctor: Class<Component>): ?Object {
   }
   return modified
 }
+
+
