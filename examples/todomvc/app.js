@@ -70,6 +70,8 @@ var mytest = {
 
 // })
 
+Vue.options.created = (a, b) => {}
+
 var app = new Vue({
   mixins: [{
     props: ['foo'],
@@ -118,19 +120,19 @@ var app = new Vue({
       return this.a.b.k
     },
   },
-  created() {
-    this.a.s = 10
-    console.warn('root component created')
-    // this._hasHookEvent = 1
-    // this._events['hook:beforeMount'] = [() => {
-    //   debugger
-    //   console.log('hook:beforeMount')
-    // }]
-    // this.$on('hook:mounted', () => {
-    //   debugger
-    //   console.log('hook:mounted');
-    // })
-  },
+  // created() {
+  //   this.a.s = 10
+  //   console.warn('root component created')
+  //   // this._hasHookEvent = 1
+  //   // this._events['hook:beforeMount'] = [() => {
+  //   //   debugger
+  //   //   console.log('hook:beforeMount')
+  //   // }]
+  //   // this.$on('hook:mounted', () => {
+  //   //   debugger
+  //   //   console.log('hook:mounted');
+  //   // })
+  // },
   beforeMount() {
     console.warn('root component beforeMount')
   },

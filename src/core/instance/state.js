@@ -28,6 +28,9 @@ import {
   isReservedAttribute
 } from '../util/index'
 
+/**
+ * 共享的配置，为了性能，避免创建多次
+ */
 const sharedPropertyDefinition = {
   enumerable: true,
   configurable: true,
@@ -64,14 +67,24 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 export function initState (vm: Component) {
   vm._watchers = []
   const opts = vm.$options
+
+  // 初始化props
   if (opts.props) initProps(vm, opts.props)
+
+  // 初始化methods
   if (opts.methods) initMethods(vm, opts.methods)
+
+  // 
   if (opts.data) {
     initData(vm)
   } else {
     observe(vm._data = {}, true /* asRootData */)
   }
+
+  // 
   if (opts.computed) initComputed(vm, opts.computed)
+
+  // 
   if (opts.watch && opts.watch !== nativeWatch) {
     initWatch(vm, opts.watch)
   }
@@ -132,7 +145,7 @@ function initProps (vm: Component, propsOptions: Object) {
     if (!(key in vm)) {
       proxy(vm, `_props`, key)
     }
-  }
+  }0
   toggleObserving(true)
 }
 

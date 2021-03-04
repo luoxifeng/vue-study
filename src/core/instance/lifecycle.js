@@ -384,9 +384,12 @@ export function callHook (vm: Component, hook: string) {
   const info = `${hook} hook`
   if (handlers) {
     for (let i = 0, j = handlers.length; i < j; i++) {
+      // 做一层包装捕获异常
       invokeWithErrorHandling(handlers[i], vm, null, vm, info)
     }
   }
+  
+  // 如果绑定了生命周期钩子同时触发
   if (vm._hasHookEvent) {
     vm.$emit('hook:' + hook)
   }

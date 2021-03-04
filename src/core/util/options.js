@@ -257,6 +257,15 @@ strats.data = function (
  * 合并过程中回会生命周期进行断言，如果是数组就进行concat,否则转换成数组
  * 里面还有容错回退机制，如果当前实例没有生命周期，就沿用来源的
  * 最终是合并成一个函数数组，然后在进行一步去重操作
+ * 这里可能有个疑问能保证最后返回的一定是个数组吗
+ * 答案是如果返回的为不为空，就一定是数组，为什么呢
+ * 我们根据下面的逻辑可以看到，当前组件配置生命周期的情况下一定会返回数组
+ * 否则使用parentVal, parentVal来源于上一层组件，如果上一层没有配置继续往上
+ * 如果中间有一层配置了生命周期，也就是当前这一层组件childVal有值，一定会返回数组
+ * 如果一直向上都没有配置一直到Vue.options,因为Vue.options没有配置所以返回undefined
+ * 在真正执行的时候callHook会做判断，不会执行
+ * 如果Vue.options上配置的生命周期不是数组dedupeHooks会返回空数组
+ * 所以按照Vue的要求如果要在Vue.options配置生命周期，应该配置为函数数组
  */
 function mergeHook (
   parentVal: ?Array<Function>,
@@ -309,10 +318,22 @@ function mergeAssets (
   vm?: Component,
   key: string
 ): Object {
+  /**
+   * 以parentVal为原型创建对象,
+   * 为什么要创建原型了，因为asset上面的配置都是公用的
+   * 这样做可以节省内存，不用每个实例上都存有一份
+   * 同时也能保证当前组件上找不到的asset的时候，可以继续向上从原型上找
+   * 这也就是我们没有在当前组件上注册keep-alive组件
+   * 却可以在任何组件里面使用，当然全局配置的directives， filters也是一样的
+   */
   const res = Object.create(parentVal || null)
   if (childVal) {
-    // 开发环境下，如果遇到不存在的asset类型会报错提示
+    /**
+     * 非生产环境下，如果遇到asset类型部位对象的会报错提示
+     * 因为asset类型应该是对象
+     */
     process.env.NODE_ENV !== 'production' && assertObjectType(key, childVal, vm)
+    // extend 就是把来源数据上的复制到当前目标对象上一份
     return extend(res, childVal)
   } else {
     return res
@@ -320,8 +341,7 @@ function mergeAssets (
 }
 
 /**
- * componets, filter等的合并策略是一样的extend 
- * 就是把来源数据上的复制到当前目标对象上一份
+ * componets, filter等的合并策略是一样的
  */
 ASSET_TYPES.forEach(function (type) {
   strats[type + 's'] = mergeAssets
@@ -345,7 +365,11 @@ strats.watch = function (
   // work around Firefox's Object.prototype.watch...
   if (parentVal === nativeWatch) parentVal = undefined
   if (childVal === nativeWatch) childVal = undefined
+
   /* istanbul ignore if */
+  /**
+   * 如果当前组件没有watch就使用以parentVal为原型创建的对象
+   */
   if (!childVal) return Object.create(parentVal || null)
   if (process.env.NODE_ENV !== 'production') {
     assertObjectType(key, childVal, vm)
@@ -655,7 +679,6 @@ export function mergeOptions (
    * 如果子组件存在这些属性把这些属性和parent个配置尽心merge
    * 得到新的配置对象作为parent
    */
-  debugger
   if (!child._base) {
     if (child.extends) {
       parent = mergeOptions(parent, child.extends, vm)
