@@ -370,19 +370,51 @@ strats.watch = function (
   /**
    * 如果当前组件没有watch就使用以parentVal为原型创建的对象
    */
+  debugger
   if (!childVal) return Object.create(parentVal || null)
+
+  /**
+   * 非生产环境下，判断如果watchb不是纯对象就提示
+   */
   if (process.env.NODE_ENV !== 'production') {
     assertObjectType(key, childVal, vm)
   }
+
+  // 如果parentval不存在直接使用当前组件的watch
   if (!parentVal) return childVal
+
+  /**
+   * 走到这里说明childVal， parentVal都有值
+   * 先把parentVal上的值混合到返回的结果中
+   * 接下来处理的都是res,返回的结果也是res
+   */
   const ret = {}
   extend(ret, parentVal)
+
+  /**
+   * 遍历当前组件的watch
+   */
   for (const key in childVal) {
-    let parent = ret[key]
-    const child = childVal[key]
+    let parent = ret[key] // 可能为空
+    const child = childVal[key] // 肯定不为空
+
+    /**
+     * 如果parent有值不是数组就处理成数组
+     */
     if (parent && !Array.isArray(parent)) {
       parent = [parent]
     }
+
+    /**
+     * 从上一步parent要么为空要么为数组，
+     * 1. parent不为空就合并当前组件同名的watch
+     * 2. parent为空, 就把child处理成数组
+     * 从这里处理的结果也可以看出当parentVal，childVal都有值的时候
+     * 无论parentVal上面有没有同名的watch,当前组件的watch的value值肯定是数组
+     * 但这不能说明是数组的肯定是当前组件的watch,
+     * 因为从parentVal可能也会有和当前组件不同名的watch也是数组的情况
+     * parentVal上的watch可能也从祖先组件或者顶层配置合并过来的
+     */
     ret[key] = parent
       ? parent.concat(child)
       : Array.isArray(child) ? child : [child]

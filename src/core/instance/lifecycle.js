@@ -17,6 +17,7 @@ import {
   validateProp,
   invokeWithErrorHandling
 } from '../util/index'
+import { filter, stubObject } from 'lodash'
 
 export let activeInstance: any = null
 export let isUpdatingChildComponent: boolean = false
@@ -395,3 +396,4 @@ export function callHook (vm: Component, hook: string) {
   }
   popTarget()
 }
+

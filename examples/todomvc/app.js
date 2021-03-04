@@ -70,14 +70,19 @@ var mytest = {
 
 // })
 
-Vue.options.created = (a, b) => {}
+Vue.options.watch = {
+  dd1: () => {}
+}
 
 var app = new Vue({
   mixins: [{
-    props: ['foo'],
+    props: ['foos'],
     data() {
       return {}
     },
+    // watch: {
+    //   dd12: () => {}
+    // }
   }],
   props: ['ddd'],
   data: {
@@ -100,6 +105,7 @@ var app = new Vue({
       'teststatic': true
     }
   },
+  // watch: {dd: () => {}, dds: () => {}},
   components: {
     mytest
   },
