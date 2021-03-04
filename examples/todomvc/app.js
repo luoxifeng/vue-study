@@ -105,7 +105,7 @@ var app = new Vue({
       'teststatic': true
     }
   },
-  // watch: {dd: () => {}, dds: () => {}},
+  watch: {dd: 'foo', dds: {handler: () => {}} },
   components: {
     mytest
   },

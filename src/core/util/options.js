@@ -424,9 +424,9 @@ strats.watch = function (
 
 /**
  * Other object hashes.
- * props，methods， computed, 合并策略是一样的
- * 如果来源没有，就直接使用当前的，
- * 如果来源有直接extend
+ * props，methods， inject, computed, 合并策略是一样的
+ * 如果父选项没有，就直接使用当前的，
+ * 如果父选项有直接extend，子选项同名的会覆盖父选项
  */
 strats.props =
 strats.methods =
@@ -437,15 +437,29 @@ strats.computed = function (
   vm?: Component,
   key: string
 ): ?Object {
+  /**
+   * 因为合并策略的执行是在规范化以后执行的
+   * props， inject，被规范化成对象，但是methods，computed可能不是
+   * 这些属性必须是纯对象，否则非生产环境下提示
+   */
   if (childVal && process.env.NODE_ENV !== 'production') {
     assertObjectType(key, childVal, vm)
   }
+  // 复选项没有提供直接使用当前的
   if (!parentVal) return childVal
+  /**
+   * 父选项存在，先混合到一个空对象上面
+   * 如果当前组件也配置了这个选项也会混入到这个对象上
+   * 最后返回这个新产生的对象
+   * 注意：这些属性的合并，同名的会以当前组件的为准，会覆盖
+   */
   const ret = Object.create(null)
   extend(ret, parentVal)
   if (childVal) extend(ret, childVal)
   return ret
 }
+
+// provide的合并和打他是一样的最终会被处理成一个函数
 strats.provide = mergeDataOrFn
 
 /**
