@@ -36,7 +36,10 @@ export function initMixin (Vue: Class<Component>) {
       // internal component options needs special treatment.
       initInternalComponent(vm, options)
     } else {
-      // vue 实例合并配置， new Vue({ ... }) 形式创建建
+      /**
+       * vue 实例合并配置， new Vue({ ... }) 形式创建建
+       * 这里的配置是经过规范化和合并后的
+       */
       vm.$options = mergeOptions(
         resolveConstructorOptions(vm.constructor),
         options || {},
@@ -97,19 +100,33 @@ export function initMixin (Vue: Class<Component>) {
  * 自定义组件的配置初始化操作
  */
 export function initInternalComponent (vm: Component, options: InternalComponentOptions) {
+  /**
+   * options是指的是组件实例化时传进来的属性上，面包含父组件，父占位节点
+   * vm.constructor.options是进过mergeOptions处理后的组件内部的配置
+   * 在这里要对两者进行一个合并
+   */
   const opts = vm.$options = Object.create(vm.constructor.options)
+
   // doing this because it's faster than dynamic enumeration.
+  /**
+   * 扩展到当前组件配置上
+   */
   const parentVnode = options._parentVnode
   opts.parent = options.parent
   opts._parentVnode = parentVnode
 
+  /**
+   * 把占位节点上面的一些特定属性，扩展到当前组件上
+   */
   const vnodeComponentOptions = parentVnode.componentOptions
   opts.propsData = vnodeComponentOptions.propsData
   opts._parentListeners = vnodeComponentOptions.listeners
   opts._renderChildren = vnodeComponentOptions.children
   opts._componentTag = vnodeComponentOptions.tag
 
-  // 设置渲染函数
+  /**
+   * 如果options上面含有render函数就设置到当前组件配置上
+   */
   if (options.render) {
     opts.render = options.render
     opts.staticRenderFns = options.staticRenderFns

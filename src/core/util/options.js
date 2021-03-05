@@ -370,7 +370,6 @@ strats.watch = function (
   /**
    * 如果当前组件没有watch就使用以parentVal为原型创建的对象
    */
-  debugger
   if (!childVal) return Object.create(parentVal || null)
 
   /**
