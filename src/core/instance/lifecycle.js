@@ -66,6 +66,9 @@ export function initLifecycle (vm: Component) {
   vm.$children = []
   vm.$refs = {}
 
+  /**
+   * 定义一些和生命周期有关的属性
+   */
   vm._watcher = null
   vm._inactive = null
   vm._directInactive = false
