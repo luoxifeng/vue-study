@@ -30,6 +30,11 @@ export function initRender (vm: Component) {
    * 这里是要从children列表内，解析出插槽节点
    */
   vm.$slots = resolveSlots(options._renderChildren, renderContext)
+
+  /**
+   * 作用域插槽是在渲染阶段解析的
+   * 是作为节点的属性存在的
+   */
   vm.$scopedSlots = emptyObject
   // bind the createElement fn to this instance
   // so that we get proper render context inside it.
@@ -44,6 +49,11 @@ export function initRender (vm: Component) {
   // they need to be reactive so that HOCs using them are always updated
   const parentData = parentVnode && parentVnode.data
 
+  /**
+   * 对$attr, $listeners建立响应式
+   * 这两个属性是不允许直接修改的
+   * 非生产环境下，直接修改会警告提示
+   */
   /* istanbul ignore else */
   if (process.env.NODE_ENV !== 'production') {
     defineReactive(vm, '$attrs', parentData && parentData.attrs || emptyObject, () => {
@@ -80,11 +90,16 @@ export function renderMixin (Vue: Class<Component>) {
     const vm: Component = this
     const { render, _parentVnode } = vm.$options
 
+    /**
+     * 在render阶段刚开始处理作用域插槽
+     * 规范化作用域插槽，会把旧的作用域插槽，普通插槽都合并到新的上面
+     * 在真正调用我们的render函数的时候，可以统一进行处理，
+     */
     if (_parentVnode) {
       vm.$scopedSlots = normalizeScopedSlots(
-        _parentVnode.data.scopedSlots,
-        vm.$slots,
-        vm.$scopedSlots
+        _parentVnode.data.scopedSlots, // 新的
+        vm.$slots, // 普通插槽
+        vm.$scopedSlots // 旧的
       )
     }
 
