@@ -52,7 +52,8 @@ export function normalizeScopedSlots (
   // avoriaz seems to mock a non-extensible $scopedSlots object
   // and when that is passed down this would cause an error
   if (slots && Object.isExtensible(slots)) {
-    (slots: any)._normalized = res
+    // (slots: any)._normalized = res
+    slots._normalized = res
   }
   def(res, '$stable', isStable)
   def(res, '$key', key)
@@ -61,20 +62,37 @@ export function normalizeScopedSlots (
 }
 
 function normalizeScopedSlot(normalSlots, key, fn) {
+  /**
+   * 最后我们执行的是这个函数
+   */
   const normalized = function () {
+    /**
+     * arguments参数在jsx或者手写render函数的时候可以传很多个
+     */
     let res = arguments.length ? fn.apply(null, arguments) : fn({})
+    /**
+     * 处理返回的vnode
+     */
     res = res && typeof res === 'object' && !Array.isArray(res)
       ? [res] // single vnode
       : normalizeChildren(res)
+    
     return res && (
       res.length === 0 ||
       (res.length === 1 && res[0].isComment) // #9658
     ) ? undefined
       : res
   }
+
   // this is a slot using the new v-slot syntax without scope. although it is
   // compiled as a scoped slot, render fn users would expect it to be present
   // on this.$slots because the usage is semantically a normal slot.
+  /**
+   * 兼容新语法，使用v-slot但是没有使用scope,比如
+   * <div><template v-slot:foo></template></div>
+   * 虽然编译成了作用域插槽，但是使用者还是希望能在this.$slots上面找到
+   * 因为用法在语义上是一个普通的插槽
+   */
   if (fn.proxy) {
     Object.defineProperty(normalSlots, key, {
       get: normalized,
@@ -85,6 +103,12 @@ function normalizeScopedSlot(normalSlots, key, fn) {
   return normalized
 }
 
+/**
+ * 
+ * @param {*} slots 
+ * @param {*} key 
+ * 代理普通插槽，普通插槽会被处理成函数
+ */
 function proxyNormalSlot(slots, key) {
   return () => slots[key]
 }
