@@ -102,6 +102,11 @@ function remove (
   )
 }
 
+/**
+ * @param {*} oldVnode 
+ * @param {*} vnode 
+ * 绑定和更新dom事件
+ */
 function updateDOMListeners (oldVnode: VNodeWithData, vnode: VNodeWithData) {
   if (isUndef(oldVnode.data.on) && isUndef(vnode.data.on)) {
     return
@@ -110,6 +115,11 @@ function updateDOMListeners (oldVnode: VNodeWithData, vnode: VNodeWithData) {
   const oldOn = oldVnode.data.on || {}
   target = vnode.elm
   normalizeEvents(on)
+  /**
+   * updateListeners 用来绑定和更新Dom以及组件事件
+   * 逻辑是统一的，通过传入不同的add, remove， createOnceHandler
+   * 来处理dom和组件事件
+   */
   updateListeners(on, oldOn, add, remove, createOnceHandler, vnode.context)
   target = undefined
 }
