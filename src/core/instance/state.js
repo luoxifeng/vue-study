@@ -74,17 +74,17 @@ export function initState (vm: Component) {
   // 初始化methods
   if (opts.methods) initMethods(vm, opts.methods)
 
-  // 
+  // 初始化data
   if (opts.data) {
     initData(vm)
   } else {
     observe(vm._data = {}, true /* asRootData */)
   }
 
-  // 
+  // 初始化computed
   if (opts.computed) initComputed(vm, opts.computed)
 
-  // 
+  // 初始化watch
   if (opts.watch && opts.watch !== nativeWatch) {
     initWatch(vm, opts.watch)
   }
@@ -149,11 +149,28 @@ function initProps (vm: Component, propsOptions: Object) {
   toggleObserving(true)
 }
 
+/**
+ * 
+ * @param {*} vm 
+ * 初始化data
+ */
 function initData (vm: Component) {
+  /**
+   * 如果data属性是函数，就调用getData返回结果
+   * 如果不是函数，可能是对象或者其他类型，同时做了空值容错
+   * 把得到的结果赋值给_data, 从这里可以看出，我们取data的值都是从_data上面取的
+   * 但是_data是一个内部属性，不建议直接使用，所以vue对_data上面的值做了一层代理
+   * 就是下面的proxy(vm, `_data`, key)，这也是我们直接在实例上能取到值的原因
+   */
   let data = vm.$options.data
   data = vm._data = typeof data === 'function'
     ? getData(data, vm)
     : data || {}
+  
+  /**
+   * 经过处理后的data如果不是纯对象，会把data赋值为对象
+   * 同时在非生产环境下会警告提示
+   */
   if (!isPlainObject(data)) {
     data = {}
     process.env.NODE_ENV !== 'production' && warn(
@@ -162,6 +179,10 @@ function initData (vm: Component) {
       vm
     )
   }
+
+  /**
+   * 遍历data的key值，代理data的属性到实例上
+   */
   // proxy data on instance
   const keys = Object.keys(data)
   const props = vm.$options.props
@@ -169,6 +190,9 @@ function initData (vm: Component) {
   let i = keys.length
   while (i--) {
     const key = keys[i]
+    /**
+     * methods上有同名的属性，报警提示
+     */
     if (process.env.NODE_ENV !== 'production') {
       if (methods && hasOwn(methods, key)) {
         warn(
@@ -177,6 +201,11 @@ function initData (vm: Component) {
         )
       }
     }
+
+    /**
+     * props有同名的属性，这个属性就不会代理到实例上
+     * 同时在非生产环境下报警提示
+     */
     if (props && hasOwn(props, key)) {
       process.env.NODE_ENV !== 'production' && warn(
         `The data property "${key}" is already declared as a prop. ` +
@@ -184,13 +213,27 @@ function initData (vm: Component) {
         vm
       )
     } else if (!isReserved(key)) {
+      /**
+       * 经过上面判断以后，key还需要满足不是 $ _ 开头
+       */
       proxy(vm, `_data`, key)
     }
   }
+
+  // 进行响应式处理
   // observe data
   observe(data, true /* asRootData */)
 }
 
+/**
+ * 
+ * @param {*} data 
+ * @param {*} vm 
+ * 初始化data, 在$options.data是函数的情况下
+ * 这里有个奇怪的点就是，pushTarget， popTarget
+ * 注释里面写了是为了解决 #7573 这个问题，关于这个问题的解释
+ * 在callHook函数那里做了分析
+ */
 export function getData (data: Function, vm: Component): any {
   // #7573 disable dep collection when invoking data getters
   pushTarget()
