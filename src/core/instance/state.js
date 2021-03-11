@@ -342,10 +342,25 @@ function createGetterInvoker(fn) {
   }
 }
 
+/**
+ * 
+ * @param {*} vm 
+ * @param {*} methods 
+ * 初始化methods
+ */
 function initMethods (vm: Component, methods: Object) {
   const props = vm.$options.props
+
+  /**
+   * 遍历methods，把方法都赋值到实例上
+   * 同时对方法都绑定了this, 保证了方法以任何方式调用的时候this指向当前的实例
+   * 避免方法在传递过程中，搞不清this的情况
+   */
   for (const key in methods) {
     if (process.env.NODE_ENV !== 'production') {
+      /**
+       * methods上的值必须是函数，否则非生产环境报警提示
+       */
       if (typeof methods[key] !== 'function') {
         warn(
           `Method "${key}" has type "${typeof methods[key]}" in the component definition. ` +
@@ -353,12 +368,20 @@ function initMethods (vm: Component, methods: Object) {
           vm
         )
       }
+
+      /**
+       * props上有同名的属性，报警提示
+       */
       if (props && hasOwn(props, key)) {
         warn(
           `Method "${key}" has already been defined as a prop.`,
           vm
         )
       }
+
+      /**
+       * 方法名和实例上 $ 或者 _ 开头的方法重复了，报警提示
+       */
       if ((key in vm) && isReserved(key)) {
         warn(
           `Method "${key}" conflicts with an existing Vue instance method. ` +
@@ -366,6 +389,12 @@ function initMethods (vm: Component, methods: Object) {
         )
       }
     }
+    
+    /**
+     * 最后把方法绑定了上下文赋值到实例上，
+     * 如果不是函数就赋值一个空函数，来保证methods上的值是函数
+     * 避免运行时，当做函数调用的事出错
+     */
     vm[key] = typeof methods[key] !== 'function' ? noop : bind(methods[key], vm)
   }
 }
