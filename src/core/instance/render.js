@@ -50,9 +50,15 @@ export function initRender (vm: Component) {
   const parentData = parentVnode && parentVnode.data
 
   /**
-   * 对$attr, $listeners建立响应式
-   * 这两个属性是不允许直接修改的
-   * 非生产环境下，直接修改会警告提示
+   * 对$attr, $listeners建立响应式, 同时防止不满足!isUpdatingChildComponent的条件下直接修改
+   * 如果不满足条件，非生产环境下，直接修改会警告提示
+   * 
+   * isUpdatingChildComponent标记代表子组件正在进行是否需要更新的判断
+   * 在父组件重新渲染时，会执行子组件data.hook.prepatch钩子，
+   * 里面会先把sUpdatingChildComponent置为true,代表组件正在进行是否更新的检查
+   * 里面会直接修改$attr, $listeners, 所以需要改变这个标记
+   * 当判断结束以后，不管需不需要更新子组件都会把标记置为false
+   * 也就是说只有在子组件进行更新阶段的时候才允许直接修改$attr, $listeners
    */
   /* istanbul ignore else */
   if (process.env.NODE_ENV !== 'production') {

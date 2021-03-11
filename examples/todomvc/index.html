@@ -6,14 +6,15 @@
   </head>
   <body>
     <section class="todoapp" >
-      <section v-bind="{is: 'span'}" dd="ddd"></section>
+      <!-- <section v-bind="{is: 'span'}" dd="ddd">g'g'g</section> -->
        <input v-model="a.c[0].d">
        {{a.c[0].d}}
-      <mytest :d="d" ll="ddd" v-model="a.b.c.d" @inputs="hoo" @fc.native="foo" v-bind="{ hook }" props="hook">
-        <div slot='asc' :class="cls" kkkk='123'>11111</div>
-        <template v-slot:[kk]="{ds}" jj="ddd" >
+      <mytest :d="d" @inputs="hoo" @fc.native="foo">
+        <!-- <template><div >111多点点11</div></template> -->
+        <!-- <div slot='asc' :class="cls" kkkk='123'>11111</div> -->
+        <!-- <template v-slot:[kk]="{ds}" jj="ddd" >
          <div >{{ds}}</div>
-        </template>
+        </template> -->
       </mytest>
       
     </section>

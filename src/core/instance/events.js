@@ -27,21 +27,10 @@ export function initEvents (vm: Component) {
   /**
    * 初始化自定义组件在标签上绑定的事件，如
    * <xxx @click='foo' @moo='moo' />
-   * 这里的vm.$options._parentListeners指的就是组件上的click, moo,形式如下
-   * {
-   *    click: function invoker() {},
-   *    moo: function invoker() {},
-   * }
-   * 这里的事件配置是经过createFnInvoker处理过的,返回的都是invoker函数
-   * invoker上面fns属性才是我们绑定的函数，这么做的目的是
-   * 为了对我们绑定的函数做一层invokeWithErrorHandling包装，
-   * 当我们触发事件的时候调用的是invoker，内部会取到invoker.fns交由invokeWithErrorHandling调用
-   * 当我们绑定的函数在执行期间出错的时候会被捕获，并提示出报错信息
-   * 注意：只有自定义组件才有_parentListeners
+   * 这里的vm.$options._parentListeners指的就是组件上的click, moo
    */
   const listeners = vm.$options._parentListeners
   if (listeners) {
-    debugger
     updateComponentListeners(vm, listeners)
   }
 }
@@ -79,6 +68,13 @@ function createOnceHandler (event, fn) {
  * 处理逻辑是一致的，区别在于传入的add, remove, createOnceHandler等工具函数不同
  * 这里传入的是处理组件事件的工具函数，内部处理的是组件实例上面的事件绑定，卸载
  * 原生Dom处理的就是调用addEventListener， removeEventListener原生方法
+ * 
+ * 这个函数有两个地方会调用
+ * 1.initEvents，组件初始化调用this._init(), _init进行初始化流程会调用initEvents
+ *  如果组件占位节点上有绑定事件，即vm.￥options._parentListeners有值会调用，
+ * 
+ * 2.父组件rerender的时候，调用组件的data.hook.prepatch钩子，里面调用updateChildComponent，
+ * updateChildComponent里面调用updateComponentListeners把新的事件绑定更新到实例上
  */
 export function updateComponentListeners (
   vm: Component,

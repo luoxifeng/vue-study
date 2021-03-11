@@ -130,6 +130,17 @@ function initProps (vm: Component, propsOptions: Object) {
           vm
         )
       }
+
+      /**
+       * 子组件直接修改props上的值会报警，子组件里面是不允许直接修改来自props的
+       * 但是当父组件重新渲染的时候，会调用子组件data.hook.prepatch钩子，
+       * 钩子里面会调用updateChildComponent来判断子组件是否需要重新渲染
+       * 首先会把isUpdatingChildComponent置为true，表示子组件正在执行更新相关的逻辑（不一定更新）
+       * 里面会做一些事件的更新，也会对props上面的值做更新，因为此时isUpdatingChildComponent = true
+       * 所以在更新的时候不会警告提示，这是vue更新组件的需要，而不是我们手动更改props值，
+       * 如果更新的props的新值和旧值不一样就会引起子组件的重新渲染，
+       * 就是因为在这里我们对props的值做了响应式处理，
+       */
       defineReactive(props, key, value, () => {
         if (!isRoot && !isUpdatingChildComponent) {
           warn(

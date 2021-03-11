@@ -11,7 +11,7 @@ var mytest = {
   model: {
     event: 'inputs'
   },
-  props: ['hh', 'd'],
+  props: ['l', 'd'],
   mixins: [{
     props: ['foo'],
     data() {
@@ -39,6 +39,9 @@ var mytest = {
   },
   beforeMount() {
     console.warn('child mytest beforeMount')
+  },
+  beforeUpdate() {
+    console.log('child mytest beforeUpdate')
   },
   mounted() {
     console.warn('child mytest mounted')
@@ -105,7 +108,11 @@ var app = new Vue({
       'teststatic': true
     }
   },
-  watch: {dd: 'foo', dds: {handler: () => {}} },
+  watch: { 
+    dd: 'foo', 
+    dds: {handler: () => {}},
+   
+  },
   components: {
     mytest
   },
