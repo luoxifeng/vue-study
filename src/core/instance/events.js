@@ -41,6 +41,7 @@ export function initEvents (vm: Component) {
    */
   const listeners = vm.$options._parentListeners
   if (listeners) {
+    debugger
     updateComponentListeners(vm, listeners)
   }
 }
@@ -74,6 +75,10 @@ function createOnceHandler (event, fn) {
  * @param {*} listeners 
  * @param {*} oldListeners 
  * 更新绑定的事件，因为我们在render的时候，绑定的事件可能会改变
+ * updateListeners可以处理Dom事件和组件自定义事件，
+ * 处理逻辑是一致的，区别在于传入的add, remove, createOnceHandler等工具函数不同
+ * 这里传入的是处理组件事件的工具函数，内部处理的是组件实例上面的事件绑定，卸载
+ * 原生Dom处理的就是调用addEventListener， removeEventListener原生方法
  */
 export function updateComponentListeners (
   vm: Component,
@@ -81,11 +86,6 @@ export function updateComponentListeners (
   oldListeners: ?Object
 ) {
   target = vm
-  /**
-   * 初始化挂载和更新原生dom事件也会调用这个方法
-   * 只是传入的 add, remove 方法不一样
-   * 初始化的时候oldListeners是没有值的
-   */
   updateListeners(listeners, oldListeners || {}, add, remove, createOnceHandler, vm)
   target = undefined
 }

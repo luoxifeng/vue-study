@@ -97,6 +97,11 @@ function initProps (vm: Component, propsOptions: Object) {
   // instead of dynamic object key enumeration.
   const keys = vm.$options._propKeys = []
   const isRoot = !vm.$parent
+
+  /**
+   * 避免深度响应式，因为props是从父组件传进来
+   * 已经在父组件进行响应式处理过了
+   */
   // root instance props should be converted
   if (!isRoot) {
     toggleObserving(false)
@@ -461,6 +466,10 @@ export function stateMixin (Vue: Class<Component>) {
       warn(`$props is readonly.`, this)
     }
   }
+
+  /**
+   * 代理_data，_props的访问
+   */
   Object.defineProperty(Vue.prototype, '$data', dataDef)
   Object.defineProperty(Vue.prototype, '$props', propsDef)
 
