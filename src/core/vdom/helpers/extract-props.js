@@ -9,6 +9,14 @@ import {
   formatComponentName
 } from 'core/util/index'
 
+/**
+ * 
+ * @param {*} data 
+ * @param {*} Ctor 
+ * @param {*} tag 
+ * 从vnode.data上提取出props
+ * 这里只提取原始的值，验证和默认值在组件内部自己处理
+ */
 export function extractPropsFromVNodeData (
   data: VNodeData,
   Ctor: Class<Component>,
