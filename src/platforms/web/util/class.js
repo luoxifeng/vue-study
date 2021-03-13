@@ -25,6 +25,13 @@ export function genClassForVnode (vnode: VNodeWithData): string {
       data = mergeClassData(childNode.data, data)
     }
   }
+
+  /**
+   * 如果是组件根节点（组件根节点parent不为空指向组件占位节点，一般位置节点paren为undefined）
+   * 向上找到组件的占位节点，提取class合并，如果组件的占位节点是父组件的根节点继续向上找，找到就提取class合并
+   * 一直到找到的节点不是组件的根节点停止向上找，从这里也可以看出class是可以穿透的
+   * 这也是为什么我们在组件占位节点上设置class, class会最终设置到根节点的原因
+   */
   while (isDef(parentNode = parentNode.parent)) {
     if (parentNode && parentNode.data) {
       data = mergeClassData(data, parentNode.data)
