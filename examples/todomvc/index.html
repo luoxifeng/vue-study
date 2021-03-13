@@ -7,10 +7,11 @@
   <body>
     <section class="todoapp" >
       <!-- <section v-bind="{is: 'span'}" dd="ddd">g'g'g</section> -->
+        <a href='http://www.baidu.com' target="_blank">ddddd</a>
        <input v-model="a.c[0].d">
        {{a.c[0].d}}
-      <mytest :d="d" @inputs="hoo" @fc.native="foo">
-        <!-- <template><div >111多点点11</div></template> -->
+      <mytest :d="d" @inputs="hoo" @fc.native="foo" class='mytest'>
+        <template><div >111多点点11</div></template>
         <!-- <div slot='asc' :class="cls" kkkk='123'>11111</div> -->
         <!-- <template v-slot:[kk]="{ds}" jj="ddd" >
          <div >{{ds}}</div>
@@ -20,5 +21,23 @@
     </section>
     <script src="../../dist/vue.js"></script>
     <script src="app.js"></script>
+    <style>
+      
+      
+      a:visited {
+        color: brown;
+      }
+
+      a:active {
+        color: red;
+      }
+
+      a:hover {
+        color: blue;
+      }
+      a:link {
+        color: aqua;
+      }
+    </style>
   </body>
 </html>

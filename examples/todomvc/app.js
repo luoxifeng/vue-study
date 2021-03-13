@@ -33,6 +33,9 @@ var mytest = {
       return this.s + 1
     },
   },
+  components: {
+    // kkk: {}
+  },
   created() {
     window.mytest = this;
     console.warn('child mytest created')
@@ -47,31 +50,32 @@ var mytest = {
     console.warn('child mytest mounted')
   },
   template: `
-    <div class="blog-post" >
+    <sss class="blog-post" >
       <h3>{{ s }}</h3>
       <h3>{{ d }}</h3>
       <slot name="asc" />
       <slot name="asd" v-bind="k" kk="123"/>
-    </div>
+    </sss>
   `
 }
 // var com = Vue.component('mytest', mytest)
 
 // Vue.component('mytest2', mytest)
 
-// Vue.component('sss', {
-//   template: `
-//     <div class="blog" >
-//     </div>
-//   `,
-//   beforeMount() {
-//     console.warn('sss sss beforeMount')
-//   },
-//   mounted() {
-//     console.warn('sss sss mounted')
-//   },
+Vue.component('sss', {
+  template: `
+    <div class="blog" >
+    <slot />
+    </div>
+  `,
+  beforeMount() {
+    console.warn('sss sss beforeMount')
+  },
+  mounted() {
+    console.warn('sss sss mounted')
+  },
 
-// })
+})
 
 Vue.options.watch = {
   dd1: () => {}

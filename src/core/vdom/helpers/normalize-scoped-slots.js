@@ -15,7 +15,6 @@ export function normalizeScopedSlots (
   normalSlots: { [key: string]: Array<VNode> },
   prevSlots?: { [key: string]: Function } | void
 ): any {
-  debugger
   let res
   const hasNormalSlots = Object.keys(normalSlots).length > 0
   const isStable = slots ? !!slots.$stable : !hasNormalSlots
