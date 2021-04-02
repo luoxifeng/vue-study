@@ -248,6 +248,27 @@ export function set (target: Array<any> | Object, key: any, val: any): any {
     target.splice(key, 1, val)
     return val
   }
+  /**
+   * 如果已经在当前对象上存在就直接赋值，注意这里并不会建立响应式
+   * 如果你对数据上面不存在的属性直接赋值，在调用$set是不会建立响应式的这里一定要注意
+   * 比如：
+   * {
+   *  data() {
+   *    return {
+   *      foo: { moo: 123 }
+   *    }
+   *  }
+   * }
+   * 如果先这样做了
+   * this.foo.noo = 321; // 这个数据显然不是响应式的
+   * 接着
+   * this.$set(this.foo, 'noo', 456);
+   * 根据下面的代码，noo已经在this.foo上，所以只会赋值，并没有建立响应式
+   * 在使用时如果想对一个不存在的属性建立响应式，要先用this.$set建立响应式
+   * 不要在调用this.$set之前直接赋值，否则，就断再调用$set也是不能建立响应式的
+   * 当然如果只是在数据上添加一个属性，而不是为了建立响应式是可以的
+   * 前提是我们要知道应用场景，否则还是要先调用$set来建立响应式
+   */
   if (key in target && !(key in Object.prototype)) {
     target[key] = val
     return val
